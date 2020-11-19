@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import system.insurance.backend.FileUploadProperties;
+import system.insurance.backend.client.Job;
 import system.insurance.backend.employee.Employee;
 import system.insurance.backend.exception.FileUploadException;
 import system.insurance.backend.exception.InvalidIdentifierException;
@@ -197,4 +198,90 @@ public class InsuranceServiceImpl implements InsuranceService {
         }
         return true;
     }
+
+    @Override
+    public Long calculatePremiumRate(String type, Long payIn, Job clientJob) {
+        InsuranceType insuranceType = InsuranceType.valueOf(type);
+        Long calculatePay = 0L;
+        if (insuranceType.equals(InsuranceType.FIRE)) {
+            calculatePay = this.firePremiumRate(payIn, clientJob);
+        } else if (insuranceType.equals(InsuranceType.INJURY)) {
+            calculatePay = this.injuryPremiumRate(payIn, clientJob);
+        } else if (insuranceType.equals(InsuranceType.DEATH)) {
+            calculatePay = this.deathPremiumRate(payIn, clientJob);
+        }
+        return calculatePay;
+    }
+    private Long firePremiumRate(Long payIn, Job clientJob) {
+        Long payment = payIn;
+        switch (clientJob) {
+            case DRIVER:
+            case OFFICE_WORKER:
+                payment = (Long)Math.round(payment * 1.2);
+                break;
+            case HOUSEWIFE:
+                payment = (Long)Math.round(payment * 1.1);
+                break;
+            case STUDENT:
+            case SOLDIER:
+            case NONE:
+                payment = (Long)Math.round(payment * 1.0);
+                break;
+            case SELF_EMPLOYMENT:
+                payment = (Long)Math.round(payment * 1.4);
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + clientJob);
+        }
+        return payment;
+    }
+    private Long injuryPremiumRate(Long payIn, Job clientJob) {
+        Long payment = payIn;
+        switch (clientJob) {
+            case DRIVER:
+            case SELF_EMPLOYMENT:
+                payment = (Long)Math.round(payment * 1.2);
+                break;
+            case HOUSEWIFE:
+            case OFFICE_WORKER:
+                payment = (Long)Math.round(payment * 1.1);
+                break;
+            case STUDENT:
+            case NONE:
+                payment = (Long)Math.round(payment * 1.0);
+                break;
+            case SOLDIER:
+                payment = (Long)Math.round(payment * 1.3);
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + clientJob);
+        }
+        return payment;
+    }
+    private Long deathPremiumRate(Long payIn, Job clientJob) {
+        Long payment = payIn;
+        switch (clientJob) {
+            case DRIVER:
+                payment = (Long)Math.round(payment * 1.3);
+                break;
+            case HOUSEWIFE:
+                payment = (Long)Math.round(payment * 1.1);
+                break;
+            case STUDENT:
+            case NONE:
+                payment = (Long)Math.round(payment * 1.0);
+                break;
+            case SOLDIER:
+                payment = (Long)Math.round(payment * 1.4);
+                break;
+            case OFFICE_WORKER:
+            case SELF_EMPLOYMENT:
+                payment = (Long)Math.round(payment * 1.2);
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + clientJob);
+        }
+        return payment;
+    }
+
 }

@@ -1,6 +1,7 @@
 package system.insurance.backend.resource.service;
 
 import org.springframework.web.multipart.MultipartFile;
+import system.insurance.backend.client.Job;
 import system.insurance.backend.resource.dto.DevelopingInsuranceDTO;
 import system.insurance.backend.resource.dto.InsuranceDTO;
 
@@ -22,4 +23,5 @@ public interface InsuranceService {
     File downloadEvaluationReport(int id) throws IOException;
 
     boolean insuranceDesign(int eid, String type, String name, List<Long> limit, List<String> condition, List<Boolean> special, List<String> targetClient);
+    Long calculatePremiumRate(String type, Long payIn, Job clientJob);
 }
