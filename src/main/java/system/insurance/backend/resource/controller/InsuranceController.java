@@ -6,6 +6,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import system.insurance.backend.resource.dto.AuthorizationReportDTO;
 import system.insurance.backend.resource.dto.DevelopingInsuranceDTO;
 import system.insurance.backend.resource.dto.InsuranceDTO;
 import system.insurance.backend.resource.dto.InsuranceInfoDTO;
@@ -14,7 +15,6 @@ import system.insurance.backend.resource.service.InsuranceService;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/insurance")
@@ -46,10 +46,17 @@ public class InsuranceController {
         return ResponseEntity.of(this.insuranceService.getInsuranceDetails(id));
     }
 
-    @PostMapping("/authorize")
-    public ResponseEntity<Boolean> uploadAuthorizationDoc(@RequestParam(name = "file")MultipartFile file) {
-        try {
-            return ResponseEntity.ok(this.insuranceService.uploadAuthorizationDoc(file));
+    @GetMapping("/authorize")
+    public List<AuthorizationReportDTO> getAuthorizationReportList(){
+        System.out.println("authorizaitionDTO불러오기");
+        return this.insuranceService.getAuthorizationReportList();
+    }
+
+    @PostMapping("/authorize/upload")
+    public ResponseEntity<Boolean> uploadAuthorizationDoc(@RequestParam(name = "file") MultipartFile file,
+                                                          @RequestParam(name="author_eid")Integer author_eid) {
+        try{
+            return ResponseEntity.ok(this.insuranceService.uploadAuthorizationDoc(file, author_eid));
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.ok(false);
@@ -57,7 +64,8 @@ public class InsuranceController {
     }
 
     @PostMapping("/evaluation")
-    public ResponseEntity<Boolean> uploadEvaluationReport(@RequestParam(name = "report") List<MultipartFile> files, @RequestParam(name = "insuranceId") int id) {
+    public ResponseEntity<Boolean> uploadEvaluationReport(@RequestParam(name = "report") List<MultipartFile> files,
+                                                          @RequestParam(name = "insuranceId") int id) {
         try {
             return ResponseEntity.ok(this.insuranceService.uploadEvaluationReport(files, id));
         } catch (IOException e) {

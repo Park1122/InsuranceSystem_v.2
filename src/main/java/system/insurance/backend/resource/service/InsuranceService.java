@@ -1,6 +1,7 @@
 package system.insurance.backend.resource.service;
 
 import org.springframework.web.multipart.MultipartFile;
+import system.insurance.backend.resource.dto.AuthorizationReportDTO;
 import system.insurance.backend.resource.dto.DevelopingInsuranceDTO;
 import system.insurance.backend.resource.dto.InsuranceDTO;
 
@@ -16,10 +17,15 @@ public interface InsuranceService {
     Map<Integer, InsuranceDTO> getProductList();
     List<DevelopingInsuranceDTO> getDevelopingInsuranceList();
     Optional<InsuranceDTO> getInsuranceDetails(int id);
-    boolean uploadAuthorizationDoc(MultipartFile file) throws IOException;
+    boolean uploadAuthorizationDoc(MultipartFile file, Integer author_id) throws IOException;
     boolean uploadEvaluationReport(List<MultipartFile> files, int insuranceId) throws IOException;
 
     File downloadEvaluationReport(int id) throws IOException;
 
     boolean insuranceDesign(int eid, String type, String name, List<Long> limit, List<String> condition, List<Boolean> special, List<String> targetClient);
+
+    List<AuthorizationReportDTO> getAuthorizationReportList();
+
+
+
 }

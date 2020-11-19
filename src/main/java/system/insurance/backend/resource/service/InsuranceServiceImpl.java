@@ -9,6 +9,7 @@ import system.insurance.backend.employee.Employee;
 import system.insurance.backend.exception.FileUploadException;
 import system.insurance.backend.exception.InvalidIdentifierException;
 import system.insurance.backend.insurance.*;
+import system.insurance.backend.resource.dto.AuthorizationReportDTO;
 import system.insurance.backend.resource.dto.DevelopingInsuranceDTO;
 import system.insurance.backend.resource.dto.GuaranteeInfoWrapper;
 import system.insurance.backend.resource.dto.InsuranceDTO;
@@ -34,14 +35,18 @@ public class InsuranceServiceImpl implements InsuranceService {
     private final SalesTargetRepository salesTargetRepository;
     private final EvaluationReportRepository evaluationReportRepository;
     private final EmployeeRepository employeeRepository;
+    private final AuthorizationReportRepository authorizationReportRepository;
 
     @Autowired
-    public InsuranceServiceImpl(FileUploadProperties prop, InsuranceRepository insuranceRepository, GuaranteeInfoRepository guaranteeRepository, SalesTargetRepository salesTargetRepository, EvaluationReportRepository evaluationReportRepository, EmployeeRepository employeeRepository) {
+    public InsuranceServiceImpl(FileUploadProperties prop, InsuranceRepository insuranceRepository, GuaranteeInfoRepository guaranteeRepository,
+                                SalesTargetRepository salesTargetRepository, EvaluationReportRepository evaluationReportRepository,
+                                EmployeeRepository employeeRepository, AuthorizationReportRepository authorizationReportRepository) {
         this.insuranceRepository = insuranceRepository;
         this.guaranteeRepository = guaranteeRepository;
         this.salesTargetRepository = salesTargetRepository;
         this.evaluationReportRepository = evaluationReportRepository;
         this.employeeRepository = employeeRepository;
+        this.authorizationReportRepository = authorizationReportRepository;
         this.authorizationDocPath = Paths.get(prop.getInsuranceAuthorizationDoc())
                 .toAbsolutePath().normalize();
         this.evaluationReportPath = Paths.get(prop.getInsuranceEvaluationReport())
@@ -53,6 +58,7 @@ public class InsuranceServiceImpl implements InsuranceService {
             throw new FileUploadException("파일을 업로드할 디렉토리를 생성하지 못했습니다.", e);
         }
     }
+
 
     @Override
     public Map<String, String> getInsuranceCompanyList() {
@@ -84,6 +90,21 @@ public class InsuranceServiceImpl implements InsuranceService {
                 .name(insurance.getName())
                 .build()));
         return productList;
+    }
+
+    @Override
+    public List<AuthorizationReportDTO> getAuthorizationReportList() {
+        List<AuthorizationReport> list = this.authorizationReportRepository.findAll();
+        List<AuthorizationReportDTO> dtoList = new ArrayList<>();
+        list.forEach(AuthorizationReport -> dtoList.add(
+                AuthorizationReportDTO.builder()
+                        .id(AuthorizationReport.getId())
+                        .path(AuthorizationReport.getPath())
+                        .fileName(AuthorizationReport.getFileName())
+                        .authorName(AuthorizationReport.getAuthor().getName())
+                        .date(AuthorizationReport.getDate())
+                        .build()));
+        return dtoList;
     }
 
     @Override
@@ -132,12 +153,25 @@ public class InsuranceServiceImpl implements InsuranceService {
     }
 
     @Override
-    public boolean uploadAuthorizationDoc(MultipartFile file) throws IOException {
+    public boolean uploadAuthorizationDoc(MultipartFile file, Integer author_eid) throws IOException {
+
         String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
         if (fileName.contains(".."))
             throw new FileUploadException("파일명에 부적절한 문자가 포함되어 있습니다. " + fileName);
         Path targetLocation = this.authorizationDocPath.resolve(fileName);
         Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+
+        Optional<Employee> opAuthor = this.employeeRepository.findById(author_eid);
+        if (opAuthor.isPresent()) {
+            Employee author = opAuthor.get();
+            authorizationReportRepository.save(
+                    AuthorizationReport.builder()
+                            .path(targetLocation.toString())
+                            .fileName(fileName)
+                            .author(author)
+                            .date(Date.valueOf(LocalDate.now()))
+                            .build());
+        }
         return true;
     }
 
