@@ -1,5 +1,6 @@
 package system.insurance.backend.resource.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -15,17 +16,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Service
 public class AnnouncementServiceImpl implements AnnouncementService {
 
     private final AnnouncementRepository announcementRepository;
     private final EmployeeRepository employeeRepository;
-
-    @Autowired
-    public AnnouncementServiceImpl(EmployeeRepository employeeRepository, AnnouncementRepository announcementRepository) {
-        this.employeeRepository = employeeRepository;
-        this.announcementRepository = announcementRepository;
-    }
 
     @Override
     public List<AnnouncementDTO> findAll() {

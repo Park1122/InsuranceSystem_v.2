@@ -1,6 +1,7 @@
 package system.insurance.backend.resource.service;
 
 import org.springframework.web.multipart.MultipartFile;
+import system.insurance.backend.client.Job;
 import system.insurance.backend.resource.dto.AuthorizationReportDTO;
 import system.insurance.backend.resource.dto.DevelopingInsuranceDTO;
 import system.insurance.backend.resource.dto.InsuranceDTO;
@@ -26,6 +27,5 @@ public interface InsuranceService {
 
     List<AuthorizationReportDTO> getAuthorizationReportList();
 
-
-
+    Long calculatePremiumRate(String type, Long payIn, Job clientJob);
 }
