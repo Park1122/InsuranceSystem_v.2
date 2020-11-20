@@ -30,14 +30,14 @@ public class Contract implements Serializable{
 	private Client client;
 	@ColumnDefault("0")
 	private int payment;
-//	private Date dueDate;
+	private Date dueDate;
 	@ColumnDefault("false")
 	private boolean compensationProvision;
-	private String paymentStatus;
+	private int paid;
 	@ManyToOne(targetEntity = Insurance.class)
 	@JoinColumn(name="insurance_id",referencedColumnName = "id")
 	private Insurance insurance;
-//	private Date startDate;
+	private Date startDate;
 	@ManyToOne(targetEntity = Employee.class)
 	@JoinColumn(name="sales_person_id",referencedColumnName = "id")
 	private Employee salesPerson;
@@ -45,16 +45,16 @@ public class Contract implements Serializable{
 	@JoinColumn(name="reinsurance_id",referencedColumnName = "id")
 	private Insurance reinsurance;
 	@Builder
-	public Contract( int payment, /*Date dueDate,*/ boolean compensationProvision,
-					String paymentStatus, Insurance insurance, /*Date startDate,*/ Employee salesPerson,
+	public Contract( int payment, Date dueDate, boolean compensationProvision,
+					int paid, Insurance insurance, Date startDate, Employee salesPerson,
 					Insurance reinsurance) {
 
 		this.payment = payment;
-//		this.dueDate = dueDate;
+		this.dueDate = dueDate;
 		this.compensationProvision = compensationProvision;
-		this.paymentStatus = paymentStatus;
+		this.paid = paid;
 		this.insurance = insurance;
-//		this.startDate = startDate;
+		this.startDate = startDate;
 		this.salesPerson = salesPerson;
 		this.reinsurance = reinsurance;
 	}

@@ -48,7 +48,6 @@ public class InsuranceController {
 
     @GetMapping("/authorize")
     public List<AuthorizationReportDTO> getAuthorizationReportList(){
-        System.out.println("authorizaitionDTO불러오기");
         return this.insuranceService.getAuthorizationReportList();
     }
 

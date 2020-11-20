@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import system.insurance.backend.exception.NoEmployeeException;
 import system.insurance.backend.resource.dto.ContractDTO;
+import system.insurance.backend.resource.dto.LossRateDTO;
 import system.insurance.backend.resource.service.SalesService;
 
 import java.util.Collections;
@@ -19,16 +20,22 @@ public class ContractController {
         this.salesService = salesService;
     }
 
-    @GetMapping("/list/responsibility")
+    @GetMapping("/policy_establishment")
     @ResponseBody
     public List<ContractDTO> getContractListByResponsibility(@RequestParam("eid") int eid) {
-        System.out.println("하하하"+eid);
         try {
             return this.salesService.getContractList(eid);
         } catch (NoEmployeeException e) {
             e.printStackTrace();
             return Collections.emptyList();
         }
+    }
+
+    @GetMapping("/loss_rate")
+    @ResponseBody
+    public List<LossRateDTO> getLossRateFor(@RequestParam("term")int term){
+        System.out.println("lossRate-"+term);
+        return this.salesService.getLossRateListFor(term);
     }
 
 

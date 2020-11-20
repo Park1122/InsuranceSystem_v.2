@@ -14,8 +14,10 @@ import system.insurance.backend.instruction.Instruction;
 import system.insurance.backend.instruction.InstructionType;
 import system.insurance.backend.instruction.SalesInstruction;
 import system.insurance.backend.insurance.Insurance;
+import system.insurance.backend.insurance.InsuranceCompany;
 import system.insurance.backend.resource.dto.ContractDTO;
 import system.insurance.backend.resource.dto.InstructionDTO;
+import system.insurance.backend.resource.dto.LossRateDTO;
 import system.insurance.backend.resource.repository.*;
 
 import java.sql.Date;
@@ -31,14 +33,21 @@ public class SalesServiceImpl implements SalesService {
     private final EmployeeRepository employeeRepository;
     private final ClientCounselingRepository clientCounselingRepository;
 
+    private final InsuranceRepository insuranceRepository;
+
+    private final InsuranceCompanyRepository insuranceCompanyRepository;
+
     @Autowired
     public SalesServiceImpl(SalesInstructionRepository salesInstructionRepository, ContractRepository contractRepository,
-                            EmployeeRepository employeeRepository, ClientCounselingRepository clientCounselingRepository
-           ) {
+                            EmployeeRepository employeeRepository, InsuranceRepository insuranceRepository,
+                            ClientCounselingRepository clientCounselingRepository, InsuranceCompanyRepository insuranceCompanyRepository
+    ) {
         this.salesInstructionRepository = salesInstructionRepository;
         this.contractRepository = contractRepository;
         this.employeeRepository = employeeRepository;
         this.clientCounselingRepository = clientCounselingRepository;
+        this.insuranceCompanyRepository = insuranceCompanyRepository;
+        this.insuranceRepository = insuranceRepository;
     }
 
 
@@ -59,7 +68,6 @@ public class SalesServiceImpl implements SalesService {
     public List<InstructionDTO> getSalesInstructionList() {
         List<Instruction> salesInstructionList = this.salesInstructionRepository.findAllByType(InstructionType.SALES);
         List<InstructionDTO> instructionDTOList = new ArrayList<>();
-        System.out.println(salesInstructionList.toString());
         salesInstructionList.forEach((instruction) -> instructionDTOList.add(InstructionDTO.builder()
                 .id(instruction.getId())
                 .title(instruction.getTitle())
@@ -73,8 +81,6 @@ public class SalesServiceImpl implements SalesService {
     @Override
     public List<ContractDTO> getContractList(int eid) throws NoEmployeeException {
         Employee employee = this.employeeRepository.findById(eid).orElseThrow(NoEmployeeException::new);
-//        System.out.println(employee.getId() + " | " + employee.getName() + "|" + employee.getAuthority());
-
         List<Contract> contractList = this.contractRepository.findAllBySalesPerson(employee);
         List<ContractDTO> contractDTOList = new ArrayList<>();
 
@@ -87,7 +93,6 @@ public class SalesServiceImpl implements SalesService {
                             .compensationProvision(contract.isCompensationProvision())
                             .count(this.contractRepository.findAllByClient(contract.getClient()).toArray().length)
                             .build());
-            System.out.println("customerName");
         });
         return contractDTOList;
     }
@@ -103,10 +108,41 @@ public class SalesServiceImpl implements SalesService {
         return true;
     }
 
-//    @Override
-//    public List<ContractDTO> getAllContractList() {
-//
-//        Optional<Contract> contract = this.contractRepository.findAll();
-//        return null;
-//    }
+    @Override
+    public List<LossRateDTO> getLossRateListFor(int term) {
+        List<LossRateDTO> lossRateList = new ArrayList<>();
+
+        List<Insurance> insuranceList = this.insuranceRepository.findAll();
+        insuranceList.forEach((insurance) -> {
+                    //이거는 회사가 보험금으로 지급한 액수.
+                    int given = 10000000;
+                    int percent = insurance.getCompany().getSupplementary_insurance_premium_percentage();
+
+                    //고객으로부터 받은 보험료
+                    //원래 0으로 계산하는 게 맞으나, 0으로 나누면 ArithmeticException이 발생하여 일단 넣음.
+                    int got = 1000;
+                    List<Contract> contractList = this.contractRepository.findAllByInsurance(insurance);
+                    for (Contract contract : contractList) {
+                        got += contract.getPaid();
+                    }
+//                    System.out.println(got*percent+"하하");
+                    float lossRate = given / ((got * percent) / 100);
+                    System.out.println(given + "/ ((" + got + "* " + percent + ")/100)");
+
+                    lossRateList.add(
+                            LossRateDTO.builder()
+                                    .companyName(insurance.getCompany().getCompanyName())
+                                    .insuranceName(insurance.getName())
+                                    .lossRate(lossRate)
+                                    .build()
+                    );
+
+                    System.out.println(insurance.getName() + lossRate);
+                }
+        );
+//        Optional<InsuranceCompany> insuranceCompany= insuranceCompanyRepository.
+
+
+        return lossRateList;
+    }
 }
