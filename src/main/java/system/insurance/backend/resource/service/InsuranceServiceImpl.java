@@ -38,10 +38,13 @@ public class InsuranceServiceImpl implements InsuranceService {
     private final EmployeeRepository employeeRepository;
     private final AuthorizationReportRepository authorizationReportRepository;
 
+    private final InsuranceCompanyRepository insuranceCompanyRepository;
+
     @Autowired
     public InsuranceServiceImpl(FileUploadProperties prop, InsuranceRepository insuranceRepository, GuaranteeInfoRepository guaranteeRepository,
                                 SalesTargetRepository salesTargetRepository, EvaluationReportRepository evaluationReportRepository,
-                                EmployeeRepository employeeRepository, AuthorizationReportRepository authorizationReportRepository) {
+                                EmployeeRepository employeeRepository, AuthorizationReportRepository authorizationReportRepository
+    ,InsuranceCompanyRepository insuranceCompanyRepository) {
         this.insuranceRepository = insuranceRepository;
         this.guaranteeRepository = guaranteeRepository;
         this.salesTargetRepository = salesTargetRepository;
@@ -52,6 +55,7 @@ public class InsuranceServiceImpl implements InsuranceService {
                 .toAbsolutePath().normalize();
         this.evaluationReportPath = Paths.get(prop.getInsuranceEvaluationReport())
                 .toAbsolutePath().normalize();
+        this.insuranceCompanyRepository=insuranceCompanyRepository;
         try {
             Files.createDirectories(this.authorizationDocPath);
             Files.createDirectories(this.evaluationReportPath);
@@ -64,9 +68,13 @@ public class InsuranceServiceImpl implements InsuranceService {
     @Override
     public Map<String, String> getInsuranceCompanyList() {
         Map<String, String> companyList = new HashMap<>();
-        for (InsuranceCompany value : InsuranceCompany.values()) {
-            companyList.put(value.name(), value.getDescription());
+        List<InsuranceCompany> companies = this.insuranceCompanyRepository.findAll();
+        for (InsuranceCompany company:companies) {
+            companyList.put(company.getCompany(),company.getCompanyName());
         }
+//        for (InsuranceCompany value : InsuranceCompany.values()) {
+//            companyList.put(value.name(), value.getDescription());
+//        }
         return companyList;
     }
 
@@ -210,7 +218,8 @@ public class InsuranceServiceImpl implements InsuranceService {
         Employee employee = employeeOptional.orElseThrow(InvalidIdentifierException::new);
         Insurance insurance = this.insuranceRepository.save(Insurance.builder()
                 .author(employee)
-                .company(InsuranceCompany.HANHWA)
+                .company(this.insuranceCompanyRepository.findByCompany("HANHWA"))
+//                .company(InsuranceCompany.HANHWA)
                 .date(Date.valueOf(LocalDate.now()))
                 .name(name)
                 .status(InsuranceStatus.DEVELOPING)

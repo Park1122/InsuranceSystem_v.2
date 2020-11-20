@@ -3,7 +3,6 @@ package system.insurance.backend;
 import lombok.*;
 import system.insurance.backend.employee.Employee;
 import system.insurance.backend.insurance.Insurance;
-import system.insurance.backend.insurance.InsuranceCompany;
 
 import javax.persistence.*;
 import java.sql.Date;

@@ -1,14 +1,31 @@
 package system.insurance.backend.insurance;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.*;
 
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
 @Getter
-public enum InsuranceCompany {
-    KYOBO("교보생명"), DB("DB손해보험"), MERITZ("메리츠화재"), SAMSUNG_LIFE("삼성생명"),
-    SAMSUNG_FIRE("삼성화재"), HANHWA("신동아화재");
+@Setter
+@NoArgsConstructor(access= AccessLevel.PROTECTED)
+public class InsuranceCompany {
 
-    private final String description;
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    private int id;
+    private String company;
+    private String companyName;
+    private int supplementary_insurance_premium_percentage;
+
+    @Builder
+    public InsuranceCompany(String company, String companyName, int supplementary_insurance_premium_percentage){
+        this.company=company;
+        this.companyName=companyName;
+        this.supplementary_insurance_premium_percentage=supplementary_insurance_premium_percentage;
+    }
+
+
 }
