@@ -78,7 +78,5 @@ public class Accident {
         private String video;
         private String scenario;
         private Long processingCost;
-        private String damages;
-
     }
 }
