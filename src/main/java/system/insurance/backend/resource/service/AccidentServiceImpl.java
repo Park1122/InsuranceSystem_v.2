@@ -32,14 +32,14 @@ public class AccidentServiceImpl implements AccidentService{
 
     @Override
     public List<ContractDTO> checkRegisteredClient(String name, String rrn) throws NoClientException {
-        Optional<Client> clientOptional = this.clientRepository.findByRrn(rrn);
-        Client client = clientOptional.orElseThrow(NoClientException::new);
-        List<Contract> contractList = this.contractRepository.findAllByClient(client);
+//        Optional<Client> clientOptional = this.clientRepository.findByRrn(rrn);
+//        Client client = clientOptional.orElseThrow(NoClientException::new);
+//        List<Contract> contractList = this.contractRepository.findAllByClient(client);
         List<ContractDTO> contractDTOList = new ArrayList<>();
-        contractList.forEach(contract -> contractDTOList.add(ContractDTO.builder()
-                .id(contract.getId())
-                .insuranceType(contract.getInsurance().getType())
-                .build()));
+//        contractList.forEach(contract -> contractDTOList.add(ContractDTO.builder()
+//                .id(contract.getId())
+//                .insuranceType(contract.getInsurance().getType())
+//                .build()));
         return contractDTOList;
     }
 
