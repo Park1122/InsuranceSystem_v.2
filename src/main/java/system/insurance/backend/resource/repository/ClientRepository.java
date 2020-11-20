@@ -9,4 +9,5 @@ import java.util.Optional;
 
 public interface ClientRepository extends JpaRepository<Client, Integer> {
 //    List<Client> findAllByType(ClientType type);
+    Optional<Client> findByRrn(String rrn);
 }
