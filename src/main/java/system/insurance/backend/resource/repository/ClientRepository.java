@@ -8,5 +8,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ClientRepository extends JpaRepository<Client, Integer> {
-    List<Client> findAllByType(ClientType type);
+//    List<Client> findAllByType(ClientType type);
 }

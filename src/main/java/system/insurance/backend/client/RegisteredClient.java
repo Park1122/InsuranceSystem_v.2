@@ -7,11 +7,15 @@ import lombok.Setter;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Table;
 
-@Entity
+
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+
+@Entity
 @DiscriminatorValue("REGISTERED")
 public class RegisteredClient extends RegisteringClient{
 

@@ -8,10 +8,12 @@ import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
-@Entity
+
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+
+@Entity
 @DiscriminatorValue("REGISTERING")
 public class RegisteringClient extends Client{
     @OneToOne

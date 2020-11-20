@@ -4,16 +4,24 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.omg.PortableServer.ServantRetentionPolicy;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Optional;
 
-@Entity
+@Slf4j
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+
+@Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public abstract class Client {
+@DiscriminatorColumn(name="type")
+public abstract class Client implements Serializable {
+    private static final long serialVersionUID = 234980209685049L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -26,6 +34,6 @@ public abstract class Client {
     private String name;
     @Column(length = 30)
     private String email;
-    @Enumerated(EnumType.STRING)
-    private ClientType type;
+//    @Enumerated(EnumType.STRING)
+//private ClientType type;
 }

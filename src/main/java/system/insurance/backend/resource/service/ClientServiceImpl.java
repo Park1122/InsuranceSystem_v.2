@@ -29,12 +29,12 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public Map<Integer, ClientDTO> findAllRegisteringClient() {
-        List<Client> clientList = this.clientRepository.findAllByType(ClientType.REGISTERING);
+//        List<Client> clientList = this.clientRepository.findAllByType(ClientType.REGISTERING);
         Map<Integer, ClientDTO> clientDTOList = new HashMap<>();
-        clientList.forEach(client -> {
-            RegisteringClient client1 = (RegisteringClient) client;
-            clientDTOList.put(client1.getId(), ClientDTO.builder().name(client1.getName()).build());
-        });
+//        clientList.forEach(client -> {
+//            RegisteringClient client1 = (RegisteringClient) client;
+//            clientDTOList.put(client1.getId(), ClientDTO.builder().name(client1.getName()).build());
+//        });
         return clientDTOList;
     }
 

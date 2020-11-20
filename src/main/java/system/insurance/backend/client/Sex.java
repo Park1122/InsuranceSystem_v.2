@@ -1,5 +1,7 @@
 package system.insurance.backend.client;
 
-public enum Sex {
+import java.io.Serializable;
+
+public enum Sex implements Serializable{
     MALE, FEMALE
 }

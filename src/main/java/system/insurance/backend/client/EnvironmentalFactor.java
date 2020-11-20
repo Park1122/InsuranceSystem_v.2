@@ -16,15 +16,15 @@ public class EnvironmentalFactor {
     @Enumerated(EnumType.STRING)
     private Job job;
     private String dangerousHobby;
-    @Column(columnDefinition = "POINT")
-    private Point residence;
+//    @Column(name="residence",nullable = false, columnDefinition = "point")
+//    private Point residence;
     private String dangerousArea;
 
     @Builder
-    public EnvironmentalFactor(Job job, String dangerousHobby, Point residence, String dangerousArea) {
+    public EnvironmentalFactor(Job job, String dangerousHobby,/* Point residence,*/ String dangerousArea) {
         this.job = job;
         this.dangerousHobby = dangerousHobby;
-        this.residence = residence;
+//        this.residence = residence;
         this.dangerousArea = dangerousArea;
     }
 }

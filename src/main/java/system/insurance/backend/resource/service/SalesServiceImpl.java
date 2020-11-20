@@ -2,6 +2,10 @@ package system.insurance.backend.resource.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import system.insurance.backend.client.Client;
+import system.insurance.backend.client.EnvironmentalFactor;
+import system.insurance.backend.client.FinancialFactor;
+import system.insurance.backend.client.PhysicalFactor;
 import system.insurance.backend.contract.Contract;
 import system.insurance.backend.counseling.ClientCounseling;
 import system.insurance.backend.employee.Employee;
@@ -9,11 +13,10 @@ import system.insurance.backend.exception.NoEmployeeException;
 import system.insurance.backend.instruction.Instruction;
 import system.insurance.backend.instruction.InstructionType;
 import system.insurance.backend.instruction.SalesInstruction;
+import system.insurance.backend.insurance.Insurance;
+import system.insurance.backend.resource.dto.ContractDTO;
 import system.insurance.backend.resource.dto.InstructionDTO;
-import system.insurance.backend.resource.repository.ContractRepository;
-import system.insurance.backend.resource.repository.ClientCounselingRepository;
-import system.insurance.backend.resource.repository.EmployeeRepository;
-import system.insurance.backend.resource.repository.SalesInstructionRepository;
+import system.insurance.backend.resource.repository.*;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -28,12 +31,18 @@ public class SalesServiceImpl implements SalesService {
     private final EmployeeRepository employeeRepository;
     private final ClientCounselingRepository clientCounselingRepository;
 
+    private final EnvironmentalFactorRepository environmentalFactorRepository;
+
     @Autowired
-    public SalesServiceImpl(SalesInstructionRepository salesInstructionRepository, ContractRepository contractRepository, EmployeeRepository employeeRepository, ClientCounselingRepository clientCounselingRepository) {
+    public SalesServiceImpl(SalesInstructionRepository salesInstructionRepository, ContractRepository contractRepository,
+                            EmployeeRepository employeeRepository, ClientCounselingRepository clientCounselingRepository
+            , EnvironmentalFactorRepository environmentalFactorRepository) {
         this.salesInstructionRepository = salesInstructionRepository;
         this.contractRepository = contractRepository;
         this.employeeRepository = employeeRepository;
         this.clientCounselingRepository = clientCounselingRepository;
+
+        this.environmentalFactorRepository = environmentalFactorRepository;
     }
 
 
@@ -55,7 +64,7 @@ public class SalesServiceImpl implements SalesService {
         List<Instruction> salesInstructionList = this.salesInstructionRepository.findAllByType(InstructionType.SALES);
         List<InstructionDTO> instructionDTOList = new ArrayList<>();
         System.out.println(salesInstructionList.toString());
-        salesInstructionList.forEach((instruction)->instructionDTOList.add(InstructionDTO.builder()
+        salesInstructionList.forEach((instruction) -> instructionDTOList.add(InstructionDTO.builder()
                 .id(instruction.getId())
                 .title(instruction.getTitle())
                 .authorId(instruction.getAuthor().getId())
@@ -66,14 +75,34 @@ public class SalesServiceImpl implements SalesService {
     }
 
     @Override
-    public List<Integer> getContractList(int eid) throws NoEmployeeException {
-        Optional<Employee> employee = this.employeeRepository.findById(eid);
-        Employee employee1 = employee.orElseThrow(NoEmployeeException::new);
-        List<Contract> contractList = this.contractRepository.findAllBySalesPerson(employee1);
-        List<Integer> ids = new ArrayList<>();
-        for (Contract contract : contractList) ids.add(contract.getId());
-        System.out.println(ids);
-        return ids;
+    public List<ContractDTO> getContractList(int eid) throws NoEmployeeException {
+        Employee employee = this.employeeRepository.findById(eid).orElseThrow(NoEmployeeException::new);
+        System.out.println(employee.getId() + " | " + employee.getName() + "|" + employee.getAuthority());
+
+        List<Contract> contractList = this.contractRepository.findAllBySalesPerson(employee);
+//        List<Client> clientList = this.clientRepository.findAll();
+
+        //invalid Stream header
+            List<EnvironmentalFactor> list = this.environmentalFactorRepository.findAll();
+
+        //정상
+//            List<FinancialFactor> list = this.financialFactorRepository.findAll();
+        //정상
+//        List<PhysicalFactor> list = this.physicalFactorRepository.findAll();
+        List<ContractDTO> contractDTOList = new ArrayList<>();
+
+
+
+        contractList.forEach((contract) -> {
+            contractDTOList.add(
+                    ContractDTO.builder()
+                            .id(contract.getId())
+                            .insuranceType(contract.getInsurance().getType())
+                            .compensationProvision(contract.isCompensationProvision())
+                            .count(this.contractRepository.findAllByClient(contract.getClient()).toArray().length)
+                            .build());
+        });
+        return contractDTOList;
     }
 
     @Override
@@ -86,4 +115,11 @@ public class SalesServiceImpl implements SalesService {
                 .date(Date.valueOf(LocalDate.now())).build());
         return true;
     }
+
+//    @Override
+//    public List<ContractDTO> getAllContractList() {
+//
+//        Optional<Contract> contract = this.contractRepository.findAll();
+//        return null;
+//    }
 }

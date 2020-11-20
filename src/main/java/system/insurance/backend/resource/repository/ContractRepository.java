@@ -9,7 +9,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ContractRepository extends JpaRepository<Contract, Integer> {
-    List<Contract> findAllBySalesPerson(Employee em);
+    List<Contract> findAllBySalesPerson(Employee employee);
 
     Optional<Contract> findByClient(Client client);
+
+    List<Contract> findAllByClient(Client client);
+
+//    List<Contract> findAll();
 }

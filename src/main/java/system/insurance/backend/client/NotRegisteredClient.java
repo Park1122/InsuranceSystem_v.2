@@ -7,11 +7,14 @@ import lombok.Setter;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
-@Entity
+
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+
+@Entity
 @DiscriminatorValue("NOT_REGISTERED")
 public class NotRegisteredClient extends Client {
     private String gift;
