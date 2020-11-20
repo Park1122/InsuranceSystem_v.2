@@ -39,33 +39,42 @@ public class Accident {
         this.contractId = contractId;
     }
 
+    @Entity
     @Getter
 	@Setter
     public static class DamageAssessmentInfo {
+        @Id
+        private int id;
         private String basis;
         private long amount;
         private String paymentMethod;
     }
 
+    @Entity
 	@Getter
 	@Setter
     public static class ResponsibilityInfo {
-        private ArrayList<String> relevantRegulations;
+        @Id
+        private int id;
+        private String relevantRegulations;
         private File basisFile;
         private boolean responsibility;
         private String judgementBasis;
     }
 
+    @Entity
     @Getter
 	@Setter
     public static class AccidentInquiryInfo {
-        private ArrayList<String> competentAuthority;
+        @Id
+        private int id;
+        private String competentAuthority;
         private File record;
         private File picture;
         private File video;
         private String scenario;
         private long processingCost;
-        private ArrayList<String> damages;
+        private String damages;
 
     }
 }
