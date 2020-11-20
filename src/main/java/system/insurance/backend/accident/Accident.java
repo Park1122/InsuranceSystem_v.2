@@ -4,15 +4,13 @@ import lombok.*;
 import system.insurance.backend.contract.Contract;
 
 import javax.persistence.*;
-import java.io.File;
-import java.util.ArrayList;
 import java.util.Date;
 
 @Getter
 @Setter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "client_Accident")
+@Table(name = "client_accident")
 public class Accident {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,31 +39,46 @@ public class Accident {
 
     @Getter
 	@Setter
+    @Entity
+    @Table(name = "damage_assessment_info")
     public static class DamageAssessmentInfo {
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int id;
         private String basis;
-        private long amount;
+        private Long amount;
         private String paymentMethod;
     }
 
 	@Getter
 	@Setter
+    @Entity
+    @Table(name = "responsibility_info")
     public static class ResponsibilityInfo {
-        private ArrayList<String> relevantRegulations;
-        private File basisFile;
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int id;
+        private String relevantRegulations;
+        private String basisFile;
         private boolean responsibility;
         private String judgementBasis;
     }
 
     @Getter
 	@Setter
+    @Entity
+    @Table(name = "accident_inquiry_info")
     public static class AccidentInquiryInfo {
-        private ArrayList<String> competentAuthority;
-        private File record;
-        private File picture;
-        private File video;
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int id;
+        private String competentAuthority;
+        private String record;
+        private String picture;
+        private String video;
         private String scenario;
-        private long processingCost;
-        private ArrayList<String> damages;
+        private Long processingCost;
+        private String damages;
 
     }
 }
