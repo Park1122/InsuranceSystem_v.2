@@ -98,7 +98,7 @@ public class InvestigationServiceImpl implements InvestigationService {
         if (strategyInvestigationOptional.isPresent()){
             StrategyInvestigation strategyInvestigation = strategyInvestigationOptional.get();
             return StrategyInvestigationDTO.builder()
-                    .company(strategyInvestigation.getInsurance().getCompany().getDescription())
+                    .company(strategyInvestigation.getInsurance().getCompany().getCompanyName())
                     .insurance(strategyInvestigation.getInsurance().getName())
                     .insuranceId(strategyInvestigation.getInsurance().getId())
                     .build();

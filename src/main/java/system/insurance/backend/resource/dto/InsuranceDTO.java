@@ -8,7 +8,6 @@ import system.insurance.backend.insurance.InsuranceStatus;
 import system.insurance.backend.insurance.InsuranceType;
 
 import java.sql.Date;
-import java.util.List;
 import java.util.Map;
 
 @Getter

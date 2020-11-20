@@ -10,16 +10,20 @@ import system.insurance.backend.insurance.InsuranceType;
 public class ContractDTO {
 
     private final int id;
+    private final String clientName;
     private final InsuranceType insuranceType;
     private final boolean compensationProvision;
     private final int count;
 
+
     @Builder
-    public ContractDTO(int id, InsuranceType insuranceType, boolean compensationProvision, int count) {
+    public ContractDTO(int id, String clientName, InsuranceType insuranceType, boolean compensationProvision, int count) {
         this.id = id;
+        this.clientName=clientName;
         this.insuranceType = insuranceType;
         this.compensationProvision = compensationProvision;
         this.count = count;
+
     }
 
 }

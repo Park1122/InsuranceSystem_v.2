@@ -31,18 +31,14 @@ public class SalesServiceImpl implements SalesService {
     private final EmployeeRepository employeeRepository;
     private final ClientCounselingRepository clientCounselingRepository;
 
-    private final EnvironmentalFactorRepository environmentalFactorRepository;
-
     @Autowired
     public SalesServiceImpl(SalesInstructionRepository salesInstructionRepository, ContractRepository contractRepository,
                             EmployeeRepository employeeRepository, ClientCounselingRepository clientCounselingRepository
-            , EnvironmentalFactorRepository environmentalFactorRepository) {
+           ) {
         this.salesInstructionRepository = salesInstructionRepository;
         this.contractRepository = contractRepository;
         this.employeeRepository = employeeRepository;
         this.clientCounselingRepository = clientCounselingRepository;
-
-        this.environmentalFactorRepository = environmentalFactorRepository;
     }
 
 
@@ -77,30 +73,21 @@ public class SalesServiceImpl implements SalesService {
     @Override
     public List<ContractDTO> getContractList(int eid) throws NoEmployeeException {
         Employee employee = this.employeeRepository.findById(eid).orElseThrow(NoEmployeeException::new);
-        System.out.println(employee.getId() + " | " + employee.getName() + "|" + employee.getAuthority());
+//        System.out.println(employee.getId() + " | " + employee.getName() + "|" + employee.getAuthority());
 
         List<Contract> contractList = this.contractRepository.findAllBySalesPerson(employee);
-//        List<Client> clientList = this.clientRepository.findAll();
-
-        //invalid Stream header
-            List<EnvironmentalFactor> list = this.environmentalFactorRepository.findAll();
-
-        //정상
-//            List<FinancialFactor> list = this.financialFactorRepository.findAll();
-        //정상
-//        List<PhysicalFactor> list = this.physicalFactorRepository.findAll();
         List<ContractDTO> contractDTOList = new ArrayList<>();
-
-
 
         contractList.forEach((contract) -> {
             contractDTOList.add(
                     ContractDTO.builder()
                             .id(contract.getId())
+                            .clientName(contract.getClient().getName())
                             .insuranceType(contract.getInsurance().getType())
                             .compensationProvision(contract.isCompensationProvision())
                             .count(this.contractRepository.findAllByClient(contract.getClient()).toArray().length)
                             .build());
+            System.out.println("customerName");
         });
         return contractDTOList;
     }
