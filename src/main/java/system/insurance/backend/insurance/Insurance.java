@@ -18,7 +18,7 @@ public class Insurance {
     private InsuranceType type;
     @Enumerated(value = EnumType.STRING)
     private InsuranceStatus status;
-    @ManyToOne
+    @ManyToOne(targetEntity = InsuranceCompany.class)
     @JoinColumn(name="insurance_company", referencedColumnName="id")
     private InsuranceCompany company;
     private String name;
