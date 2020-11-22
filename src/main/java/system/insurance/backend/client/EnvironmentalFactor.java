@@ -27,4 +27,5 @@ public class EnvironmentalFactor {
 //        this.residence = residence;
         this.dangerousArea = dangerousArea;
     }
+
 }

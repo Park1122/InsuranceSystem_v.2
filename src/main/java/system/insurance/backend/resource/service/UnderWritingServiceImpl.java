@@ -1,12 +1,19 @@
 package system.insurance.backend.resource.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import system.insurance.backend.client.RegisteredClient;
+import system.insurance.backend.contract.Contract;
+import system.insurance.backend.employee.Employee;
+import system.insurance.backend.exception.NoEmployeeException;
 import system.insurance.backend.insurance.Insurance;
+import system.insurance.backend.resource.dto.ClientDTO;
+import system.insurance.backend.resource.dto.ContractDTO;
+import system.insurance.backend.resource.dto.ContractDetailDTO;
 import system.insurance.backend.resource.dto.UWPolicyDTO;
+import system.insurance.backend.resource.repository.ContractRepository;
+import system.insurance.backend.resource.repository.EmployeeRepository;
 import system.insurance.backend.resource.repository.InsuranceRepository;
 import system.insurance.backend.resource.repository.UnderWritingPolicyRepository;
 import system.insurance.backend.underWriting.UWPolicy;
@@ -23,10 +30,37 @@ public class UnderWritingServiceImpl implements UnderWritingService {
     private InsuranceRepository insuranceRepository;
     private UnderWritingPolicyRepository underWritingPolicyRepository;
 
+    private EmployeeRepository employeeRepository;
+    private ContractRepository contractRepository;
 
-    public UnderWritingServiceImpl(InsuranceRepository insuranceRepository, UnderWritingPolicyRepository underWritingPolicyRepository) {
+
+    @Autowired
+    public UnderWritingServiceImpl(InsuranceRepository insuranceRepository, UnderWritingPolicyRepository underWritingPolicyRepository,
+    EmployeeRepository employeeRepository, ContractRepository contractRepository) {
         this.insuranceRepository = insuranceRepository;
         this.underWritingPolicyRepository = underWritingPolicyRepository;
+        this.employeeRepository=employeeRepository;
+        this.contractRepository=contractRepository;
+    }
+
+    @Override
+    public List<ContractDTO> getContractList(int eid) throws NoEmployeeException {
+        Employee employee = this.employeeRepository.findById(eid).orElseThrow(NoEmployeeException::new);
+        List<Contract> contractList = this.contractRepository.findAllBySalesPerson(employee);
+        List<ContractDTO> contractDTOList = new ArrayList<>();
+
+        contractList.forEach((contract) -> {
+            contractDTOList.add(
+                    ContractDTO.builder()
+                            .id(contract.getId())
+                            .clientName(contract.getClient().getName())
+                            .insuranceType(contract.getInsurance().getType())
+                            .compensationProvision(contract.isCompensationProvision())
+                            .count(this.contractRepository.findAllByClientAndSalesPerson(contract.getClient(),employee).toArray().length)
+                            .underWritingPassed(contract.isUnderwritingPassed())
+                            .build());
+        });
+        return contractDTOList;
     }
 
     @Override
@@ -65,8 +99,63 @@ public class UnderWritingServiceImpl implements UnderWritingService {
                      .financialPolicy(uwPolicy.getFinancialPolicy())
                      .build()
             );
+//            System.out.println(uwPolicy.getInsurance().getId()+uwPolicy.getInsurance().getName()+uwPolicy.getPhysicalPolicy());
         });
         return uwPolicyDTOList;
+    }
+
+    @Override
+    public boolean saveFactorsToClient() {
+        return false;
+    }
+
+    @Override
+    public List<ContractDTO> getUnPassedContractList(int id) throws NoEmployeeException {
+        List<ContractDTO> contractList = new ArrayList<>();
+
+        Optional<Employee> opt = this.employeeRepository.findById(id);
+        if(opt.isPresent()) {
+            Employee employee=opt.get();
+           List<Contract> contracts= this.contractRepository.findAllBySalesPerson(employee);
+           contracts.forEach((contract)->{
+               contractList.add(
+                       ContractDTO.builder()
+                               .id(contract.getId())
+                               .clientName(contract.getClient().getName())
+                               .insuranceType(contract.getInsurance().getType())
+                               .compensationProvision(contract.isCompensationProvision())
+                               .count(this.contractRepository.findAllByClientAndSalesPersonAndUnderwritingPassed(contract.getClient(),employee,contract.isUnderwritingPassed()).toArray().length)
+                               .underWritingPassed(contract.isUnderwritingPassed())
+                               .build());
+           });
+        }else{
+            throw new NoEmployeeException();
+        }
+        return contractList;
+    }
+
+    @Override
+    public ResponseEntity<ContractDetailDTO> getContractDetailFactors(int contractId) {
+        Optional<Contract> opt =this.contractRepository.findById(contractId);
+
+        if(opt.isPresent()){
+            Contract contract = opt.get();
+            ContractDetailDTO dto= ContractDetailDTO
+                    .builder()
+                    .insuranceName(contract.getInsurance().getName())
+                    .insuranceType(contract.getInsurance().getType().name())
+                    .environmentalDangerousArea(((RegisteredClient)contract.getClient()).getEnvironmentalFactor().getDangerousArea())
+                    .environmentalJob(((RegisteredClient)contract.getClient()).getEnvironmentalFactor().getJob().name())
+                    .environmentalDangerousHobby(((RegisteredClient)contract.getClient()).getEnvironmentalFactor().getDangerousHobby())
+                    .financialCreditRating(((RegisteredClient)contract.getClient()).getFinancialFactor().getCreditRating())
+                    .financialIncome(((RegisteredClient)contract.getClient()).getFinancialFactor().getIncome())
+                    .financialProperty(((RegisteredClient)contract.getClient()).getFinancialFactor().getProperty())
+                    .physicalDrinkingFrequency(((RegisteredClient)contract.getClient()).getPhysicalFactor().getDrinkingFrequency().getDescription())
+                    .physicalSmokeFrequency(((RegisteredClient)contract.getClient()).getPhysicalFactor().getSmokeFrequency().getDescription())
+                    .build();
+            return ResponseEntity.ok(dto);
+        }
+        return null;
     }
 
 

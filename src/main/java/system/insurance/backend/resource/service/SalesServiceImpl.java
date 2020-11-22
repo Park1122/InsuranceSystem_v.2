@@ -78,24 +78,7 @@ public class SalesServiceImpl implements SalesService {
         return instructionDTOList;
     }
 
-    @Override
-    public List<ContractDTO> getContractList(int eid) throws NoEmployeeException {
-        Employee employee = this.employeeRepository.findById(eid).orElseThrow(NoEmployeeException::new);
-        List<Contract> contractList = this.contractRepository.findAllBySalesPerson(employee);
-        List<ContractDTO> contractDTOList = new ArrayList<>();
 
-        contractList.forEach((contract) -> {
-            contractDTOList.add(
-                    ContractDTO.builder()
-                            .id(contract.getId())
-                            .clientName(contract.getClient().getName())
-                            .insuranceType(contract.getInsurance().getType())
-                            .compensationProvision(contract.isCompensationProvision())
-                            .count(this.contractRepository.findAllByClient(contract.getClient()).toArray().length)
-                            .build());
-        });
-        return contractDTOList;
-    }
 
     @Override
     public boolean saveCounselingRecord(String content, int eid) throws NoEmployeeException {
