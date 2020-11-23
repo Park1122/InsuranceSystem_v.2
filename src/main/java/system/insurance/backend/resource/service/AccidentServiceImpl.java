@@ -4,8 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import system.insurance.backend.accident.Accident;
 import system.insurance.backend.accident.AccidentType;
-import system.insurance.backend.client.Client;
-import system.insurance.backend.contract.Contract;
+import system.insurance.backend.exception.NoAccidentException;
 import system.insurance.backend.exception.NoClientException;
 import system.insurance.backend.resource.dto.ContractDTO;
 import system.insurance.backend.resource.repository.AccidentRepository;
@@ -53,4 +52,19 @@ public class AccidentServiceImpl implements AccidentService{
                 .build());
         return true;
     }
+
+    @Override
+    public boolean saveHandledAccident(int accidentId, String scenario, String damage, String picture, String video,
+                                       String record, String processingCost) throws NoAccidentException{
+        Optional<Accident> optAccident = this.accidentRepository.findById(accidentId);
+        Accident accident = optAccident.orElseThrow(NoAccidentException::new);
+        accident.getInquiryInfo().setScenario(scenario);
+        accident.getInquiryInfo().setPicture(picture);
+        accident.getInquiryInfo().setVideo(video);
+        accident.getInquiryInfo().setRecord(record);
+        accident.getInquiryInfo().setProcessingCost(Long.parseLong(processingCost));
+        this.accidentRepository.save(accident);
+        return true;
+    }
+
 }

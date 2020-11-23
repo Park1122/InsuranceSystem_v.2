@@ -3,6 +3,7 @@ package system.insurance.backend.resource.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import system.insurance.backend.accident.AccidentType;
+import system.insurance.backend.exception.NoAccidentException;
 import system.insurance.backend.exception.NoClientException;
 import system.insurance.backend.resource.dto.ContractDTO;
 import system.insurance.backend.resource.service.AccidentService;
@@ -30,5 +31,18 @@ public class AccidentController {
     public boolean registerAccident(@RequestParam(name = "contractId")int contractId,@RequestParam(name = "accidentArea") String accidentArea,
                                     @RequestParam(name = "accidentType")AccidentType accidentType, @RequestParam(name = "date")Date date) {
         return this.accidentService.addAccident(contractId, accidentArea, accidentType, date);
+    }
+
+    @PostMapping("/handle_accident")
+    public boolean handleAccidentArea(@RequestParam(name = "accidentId")int accidentId, @RequestParam(name = "scenario") String scenario,
+                                      @RequestParam(name = "damage") String damage, @RequestParam(name = "picture") String picture,
+                                      @RequestParam(name = "video") String video, @RequestParam(name = "record") String record,
+                                      @RequestParam(name = "processingCost") String processingCost) {
+        try {
+            return this.accidentService.saveHandledAccident(accidentId, scenario, damage, picture, video, record, processingCost);
+        } catch (NoAccidentException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
