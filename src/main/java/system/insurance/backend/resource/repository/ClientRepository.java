@@ -1,6 +1,7 @@
 package system.insurance.backend.resource.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import system.insurance.backend.client.Client;
 import system.insurance.backend.client.ClientType;
 
@@ -9,5 +10,6 @@ import java.util.Optional;
 
 public interface ClientRepository extends JpaRepository<Client, Integer> {
 //    List<Client> findAllByType(ClientType type);
-//    Optional<Client> findByRrn(String rrn);
+    @Query("from RegisteringClient")
+    Optional<Client> findByRrn(String rrn);
 }
