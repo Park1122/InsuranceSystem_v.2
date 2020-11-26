@@ -7,6 +7,7 @@ import system.insurance.backend.client.EnvironmentalFactor;
 import system.insurance.backend.client.FinancialFactor;
 import system.insurance.backend.client.PhysicalFactor;
 import system.insurance.backend.contract.Contract;
+import system.insurance.backend.contract.PremiumPayment;
 import system.insurance.backend.counseling.ClientCounseling;
 import system.insurance.backend.employee.Employee;
 import system.insurance.backend.exception.NoEmployeeException;
@@ -22,9 +23,7 @@ import system.insurance.backend.resource.repository.*;
 
 import java.sql.Date;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class SalesServiceImpl implements SalesService {
@@ -35,18 +34,18 @@ public class SalesServiceImpl implements SalesService {
 
     private final InsuranceRepository insuranceRepository;
 
-    private final InsuranceCompanyRepository insuranceCompanyRepository;
+    private final PremiumPaymentRepository premiumPaymentRepository;
 
     @Autowired
     public SalesServiceImpl(SalesInstructionRepository salesInstructionRepository, ContractRepository contractRepository,
                             EmployeeRepository employeeRepository, InsuranceRepository insuranceRepository,
-                            ClientCounselingRepository clientCounselingRepository, InsuranceCompanyRepository insuranceCompanyRepository
+                            ClientCounselingRepository clientCounselingRepository, PremiumPaymentRepository premiumPaymentRepository
     ) {
         this.salesInstructionRepository = salesInstructionRepository;
         this.contractRepository = contractRepository;
         this.employeeRepository = employeeRepository;
         this.clientCounselingRepository = clientCounselingRepository;
-        this.insuranceCompanyRepository = insuranceCompanyRepository;
+        this.premiumPaymentRepository = premiumPaymentRepository;
         this.insuranceRepository = insuranceRepository;
     }
 
@@ -78,24 +77,7 @@ public class SalesServiceImpl implements SalesService {
         return instructionDTOList;
     }
 
-    @Override
-    public List<ContractDTO> getContractList(int eid) throws NoEmployeeException {
-        Employee employee = this.employeeRepository.findById(eid).orElseThrow(NoEmployeeException::new);
-        List<Contract> contractList = this.contractRepository.findAllBySalesPerson(employee);
-        List<ContractDTO> contractDTOList = new ArrayList<>();
 
-        contractList.forEach((contract) -> {
-            contractDTOList.add(
-                    ContractDTO.builder()
-                            .id(contract.getId())
-                            .clientName(contract.getClient().getName())
-                            .insuranceType(contract.getInsurance().getType())
-                            .compensationProvision(contract.isCompensationProvision())
-                            .count(this.contractRepository.findAllByClient(contract.getClient()).toArray().length)
-                            .build());
-        });
-        return contractDTOList;
-    }
 
     @Override
     public boolean saveCounselingRecord(String content, int eid) throws NoEmployeeException {
@@ -118,12 +100,30 @@ public class SalesServiceImpl implements SalesService {
                     int given = 10000000;
                     int percent = insurance.getCompany().getSupplementary_insurance_premium_percentage();
 
+                    List<Contract> contractList = this.contractRepository.findAllByInsurance(insurance);
+
+                    //계산을 위한 오늘 Date
+                    Date today= Date.valueOf(LocalDate.now());
+                    Calendar calendar= new GregorianCalendar(Locale.KOREA);
+                    calendar.setTime(today);
+
+                    //기준날짜인 오늘로부터 term개월 전
+                    calendar.add(calendar.MONTH,-term);
+                    Date target=new java.sql.Date(calendar.getTime().getTime());
+
+
                     //고객으로부터 받은 보험료
                     //원래 0으로 계산하는 게 맞으나, 0으로 나누면 ArithmeticException이 발생하여 일단 넣음.
                     int got = 1000;
-                    List<Contract> contractList = this.contractRepository.findAllByInsurance(insurance);
                     for (Contract contract : contractList) {
-                        got += contract.getPaid();
+
+                        List<PremiumPayment> premiumPayments = this.premiumPaymentRepository.findAllByContract(contract);
+                        for(PremiumPayment premiumPayment: premiumPayments){
+                            if(premiumPayment.getDate().after(target)){
+                                got+=premiumPayment.getPaidAmount();
+                            }
+                        }
+
                     }
 //                    System.out.println(got*percent+"하하");
                     float lossRate = given / ((got * percent) / 100);

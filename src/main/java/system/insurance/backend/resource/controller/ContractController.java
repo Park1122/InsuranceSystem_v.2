@@ -6,6 +6,7 @@ import system.insurance.backend.exception.NoEmployeeException;
 import system.insurance.backend.resource.dto.ContractDTO;
 import system.insurance.backend.resource.dto.LossRateDTO;
 import system.insurance.backend.resource.service.SalesService;
+import system.insurance.backend.resource.service.UnderWritingService;
 
 import java.util.Collections;
 import java.util.List;
@@ -14,17 +15,19 @@ import java.util.List;
 @RequestMapping("/contract")
 public class ContractController {
     private final SalesService salesService;
+    private final UnderWritingService underWritingService;
 
     @Autowired
-    public ContractController(SalesService salesService) {
+    public ContractController(SalesService salesService, UnderWritingService underWritingService) {
         this.salesService = salesService;
+        this.underWritingService=underWritingService;
     }
 
     @GetMapping("/policy_establishment")
     @ResponseBody
     public List<ContractDTO> getContractListByResponsibility(@RequestParam("eid") int eid) {
         try {
-            return this.salesService.getContractList(eid);
+            return this.underWritingService.getContractList(eid);
         } catch (NoEmployeeException e) {
             e.printStackTrace();
             return Collections.emptyList();

@@ -14,16 +14,17 @@ public class ContractDTO {
     private final InsuranceType insuranceType;
     private final boolean compensationProvision;
     private final int count;
+    private final boolean underWritingPassed;
 
 
     @Builder
-    public ContractDTO(int id, String clientName, InsuranceType insuranceType, boolean compensationProvision, int count) {
+    public ContractDTO(int id, String clientName, InsuranceType insuranceType, boolean compensationProvision, int count, boolean underWritingPassed) {
         this.id = id;
         this.clientName=clientName;
         this.insuranceType = insuranceType;
         this.compensationProvision = compensationProvision;
         this.count = count;
-
+        this.underWritingPassed=underWritingPassed;
     }
 
 }

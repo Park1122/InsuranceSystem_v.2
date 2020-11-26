@@ -11,7 +11,7 @@ public interface SalesService{
     boolean instructionRegister(String title, String instruction, int id) throws NoEmployeeException;
 
     List<InstructionDTO> getSalesInstructionList();
-    List<ContractDTO> getContractList(int eid) throws NoEmployeeException;
+
     boolean saveCounselingRecord(String content, int eid) throws NoEmployeeException;
 
 
