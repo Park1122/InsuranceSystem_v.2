@@ -4,13 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import system.insurance.backend.announcement.Announcement;
-import system.insurance.backend.resource.repository.AnnouncementRepository;
-import system.insurance.backend.resource.repository.ClientRepository;
-import system.insurance.backend.resource.repository.GuaranteeInfoRepository;
-
-import java.sql.Date;
-import java.time.LocalDate;
+import system.insurance.backend.repository.AnnouncementRepository;
+import system.insurance.backend.repository.ClientRepository;
+import system.insurance.backend.repository.GuaranteeInfoRepository;
 
 @SpringBootTest
 @Slf4j
