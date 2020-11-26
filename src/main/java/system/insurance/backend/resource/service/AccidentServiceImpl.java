@@ -6,12 +6,14 @@ import system.insurance.backend.accident.Accident;
 import system.insurance.backend.accident.AccidentType;
 import system.insurance.backend.client.Client;
 import system.insurance.backend.contract.Contract;
+import system.insurance.backend.exception.NoAccidentException;
 import system.insurance.backend.exception.NoClientException;
 import system.insurance.backend.resource.dto.ContractDTO;
 import system.insurance.backend.resource.repository.AccidentRepository;
 import system.insurance.backend.resource.repository.ClientRepository;
 import system.insurance.backend.resource.repository.ContractRepository;
 
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,14 +34,14 @@ public class AccidentServiceImpl implements AccidentService{
 
     @Override
     public List<ContractDTO> checkRegisteredClient(String name, String rrn) throws NoClientException {
-//        Optional<Client> clientOptional = this.clientRepository.findByRrn(rrn);
-//        Client client = clientOptional.orElseThrow(NoClientException::new);
-//        List<Contract> contractList = this.contractRepository.findAllByClient(client);
+        Optional<Client> clientOptional = this.clientRepository.findByRrn(rrn);
+        Client client = clientOptional.orElseThrow(NoClientException::new);
+        List<Contract> contractList = this.contractRepository.findAllByClient(client);
         List<ContractDTO> contractDTOList = new ArrayList<>();
-//        contractList.forEach(contract -> contractDTOList.add(ContractDTO.builder()
-//                .id(contract.getId())
-//                .insuranceType(contract.getInsurance().getType())
-//                .build()));
+        contractList.forEach(contract -> contractDTOList.add(ContractDTO.builder()
+                .id(contract.getId())
+                .insuranceType(contract.getInsurance().getType())
+                .build()));
         return contractDTOList;
     }
 
@@ -53,4 +55,19 @@ public class AccidentServiceImpl implements AccidentService{
                 .build());
         return true;
     }
+
+    @Override
+    public boolean saveHandledAccident(int accidentId, String scenario, String damage, String picture, String video,
+                                       String record, String processingCost) throws NoAccidentException{
+        Optional<Accident> optAccident = this.accidentRepository.findById(accidentId);
+        Accident accident = optAccident.orElseThrow(NoAccidentException::new);
+        accident.getInquiryInfo().setScenario(scenario);
+        accident.getInquiryInfo().setPicture(picture);
+        accident.getInquiryInfo().setVideo(video);
+        accident.getInquiryInfo().setRecord(record);
+        accident.getInquiryInfo().setProcessingCost(Long.parseLong(processingCost));
+        this.accidentRepository.save(accident);
+        return true;
+    }
+
 }
