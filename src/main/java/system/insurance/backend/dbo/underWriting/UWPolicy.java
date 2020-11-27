@@ -4,7 +4,7 @@ import lombok.*;
 import system.insurance.backend.dbo.insurance.Insurance;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.sql.Date;
 
 @Entity
 @Getter
