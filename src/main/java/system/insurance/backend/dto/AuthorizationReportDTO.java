@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 
 @Getter
@@ -17,10 +18,10 @@ public class AuthorizationReportDTO {
     private String path;
     private String fileName;
     private String authorName;
-    private Date date;
+    private LocalDate date;
 
     @Builder
-    public AuthorizationReportDTO(int id, String path, String fileName, String authorName, Date date) {
+    public AuthorizationReportDTO(int id, String path, String fileName, String authorName, LocalDate date) {
         this.id = id;
         this.path = path;
         this.fileName=fileName;

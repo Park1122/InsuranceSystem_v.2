@@ -6,6 +6,7 @@ import system.insurance.backend.dbo.insurance.Insurance;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "strategy_investigation")
@@ -20,13 +21,13 @@ public class StrategyInvestigation {
     @JoinColumn
     private Insurance insurance;
     private String title;
-    private Date date;
+    private LocalDate date;
     @ManyToOne
     @JoinColumn
     private Employee author;
 
     @Builder
-    public StrategyInvestigation(Insurance insurance, String title, Date date, Employee author) {
+    public StrategyInvestigation(Insurance insurance, String title, LocalDate date, Employee author) {
         this.insurance = insurance;
         this.title = title;
         this.date = date;

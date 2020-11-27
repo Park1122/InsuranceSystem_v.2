@@ -8,6 +8,7 @@ import system.insurance.backend.dbo.employee.Employee;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.time.LocalDate;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -23,10 +24,10 @@ public class ClientCounseling {
     @JoinColumn(name = "counselor_id", referencedColumnName = "id")
     private Employee counselor;
     private String content;
-    private Date date;
+    private LocalDate date;
 
     @Builder
-    public ClientCounseling(Employee counselor, String content, Date date) {
+    public ClientCounseling(Employee counselor, String content, LocalDate date) {
         this.counselor = counselor;
         this.content = content;
         this.date = date;

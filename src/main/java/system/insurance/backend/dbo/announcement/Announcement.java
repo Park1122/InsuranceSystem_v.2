@@ -6,6 +6,7 @@ import system.insurance.backend.dbo.employee.Employee;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.time.LocalDate;
 
 @Slf4j
 @Entity
@@ -19,7 +20,7 @@ public class Announcement {
     private int id;
     @Column(length = 500)
     private String title;
-    private Date date;
+    private LocalDate date;
     @ManyToOne(targetEntity = Employee.class)
     @JoinColumn(name = "author", referencedColumnName = "id")
     private Employee author;
@@ -28,7 +29,7 @@ public class Announcement {
     private boolean priority;
 
     @Builder
-    public Announcement(String title, Date date, Employee author, String content, boolean priority) {
+    public Announcement(String title, LocalDate date, Employee author, String content, boolean priority) {
         this.title = title;
         this.date = date;
         this.author = author;

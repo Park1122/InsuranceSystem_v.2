@@ -8,6 +8,7 @@ import system.insurance.backend.exception.NoClientException;
 import system.insurance.backend.dto.ContractDTO;
 import system.insurance.backend.service.AccidentService;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class AccidentController {
 
     @PostMapping("/new_accident/accident_register")
     public boolean registerAccident(@RequestParam(name = "contractId")int contractId,@RequestParam(name = "accidentArea") String accidentArea,
-                                    @RequestParam(name = "accidentType")AccidentType accidentType, @RequestParam(name = "date")Date date) {
+                                    @RequestParam(name = "accidentType")AccidentType accidentType, @RequestParam(name = "date") LocalDateTime date) {
         return this.accidentService.addAccident(contractId, accidentArea, accidentType, date);
     }
 

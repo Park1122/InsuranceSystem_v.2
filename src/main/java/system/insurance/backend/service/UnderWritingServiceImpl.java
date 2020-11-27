@@ -77,7 +77,7 @@ public class UnderWritingServiceImpl implements UnderWritingService {
                                 .environmentalPolicy("미정")
                                 .physicalPolicy("미정")
                                 .financialPolicy("미정")
-                                .date(Date.valueOf(LocalDate.now()))
+                                .date(LocalDate.now())
                                 .build()
                 );
 

@@ -52,7 +52,7 @@ public class SalesServiceImpl implements SalesService {
                 .title(title)
                 .instruction(instruction)
                 .type(InstructionType.SALES)
-                .date(Date.valueOf(LocalDate.now()))
+                .date(LocalDate.now())
                 .build());
         return true;
     }
@@ -80,7 +80,7 @@ public class SalesServiceImpl implements SalesService {
         this.clientCounselingRepository.save(ClientCounseling.builder()
                 .content(content)
                 .counselor(employee1)
-                .date(Date.valueOf(LocalDate.now())).build());
+                .date(LocalDate.now()).build());
         return true;
     }
 
@@ -113,7 +113,7 @@ public class SalesServiceImpl implements SalesService {
 
                         List<PremiumPayment> premiumPayments = this.premiumPaymentRepository.findAllByContract(contract);
                         for(PremiumPayment premiumPayment: premiumPayments){
-                            if(premiumPayment.getDate().after(target)){
+                            if(Date.valueOf(premiumPayment.getDate()).after(target)){
                                 got+=premiumPayment.getPaidAmount();
                             }
                         }

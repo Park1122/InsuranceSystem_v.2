@@ -5,6 +5,7 @@ import system.insurance.backend.dbo.employee.Employee;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -25,10 +26,10 @@ public class Insurance {
     @ManyToOne(targetEntity = Employee.class)
     @JoinColumn(name = "author", referencedColumnName = "id")
     private Employee author;
-    private Date date;
+    private LocalDate date;
 
     @Builder
-    public Insurance(InsuranceType type, InsuranceStatus status, InsuranceCompany company, String name, Employee author, Date date) {
+    public Insurance(InsuranceType type, InsuranceStatus status, InsuranceCompany company, String name, Employee author, LocalDate date) {
         this.type = type;
         this.status = status;
         this.company = company;

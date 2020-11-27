@@ -5,6 +5,8 @@ import system.insurance.backend.dbo.contract.Contract;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -18,7 +20,7 @@ public class Accident {
     @ManyToOne(targetEntity = Contract.class)
     @JoinColumn(name = "contract_id", referencedColumnName = "id")
     private int contractId;
-    private Date date;
+    private LocalDateTime date;
     private String accidentArea;
     private AccidentType accidentType;
     private boolean complete;
@@ -30,7 +32,7 @@ public class Accident {
     private ResponsibilityInfo responsibilityInfo;
 
     @Builder
-    public Accident(Date date, String accidentArea, AccidentType accidentType, int contractId) {
+    public Accident(LocalDateTime date, String accidentArea, AccidentType accidentType, int contractId) {
         this.date = date;
         this.accidentArea = accidentArea;
         this.accidentType = accidentType;

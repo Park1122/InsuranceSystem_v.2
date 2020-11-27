@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.time.LocalDate;
 
 @Entity
 @NoArgsConstructor(access= AccessLevel.PROTECTED)
@@ -19,12 +20,12 @@ public class PremiumPayment {
     @ManyToOne
     private Contract contract;
 
-    private Date date;
+    private LocalDate date;
 
     private Long paidAmount;
 
     @Builder
-    public PremiumPayment(Contract contract, Date date, Long paidAmount) {
+    public PremiumPayment(Contract contract, LocalDate date, Long paidAmount) {
         this.contract = contract;
         this.date = date;
         this.paidAmount = paidAmount;

@@ -11,6 +11,7 @@ import system.insurance.backend.dbo.insurance.Insurance;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Date;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -31,14 +32,14 @@ public class Contract implements Serializable{
 
 	@ColumnDefault("0")
 	private int payment;
-	private Date dueDate;
+	private LocalDate dueDate;
 	@ColumnDefault("false")
 	private boolean compensationProvision;
 	private int paid;
 	@ManyToOne(targetEntity = Insurance.class)
 	@JoinColumn(name="insurance_id",referencedColumnName = "id")
 	private Insurance insurance;
-	private Date startDate;
+	private LocalDate startDate;
 	@ManyToOne(targetEntity = Employee.class)
 	@JoinColumn(name="sales_person_id",referencedColumnName = "id")
 	private Employee salesPerson;
@@ -46,8 +47,8 @@ public class Contract implements Serializable{
 	@JoinColumn(name="reinsurance_id",referencedColumnName = "id")
 	private Insurance reinsurance;
 	@Builder
-	public Contract( boolean underwritingPassed, int payment, Date dueDate, boolean compensationProvision,
-					int paid, Insurance insurance, Date startDate, Employee salesPerson,
+	public Contract( boolean underwritingPassed, int payment, LocalDate dueDate, boolean compensationProvision,
+					int paid, Insurance insurance, LocalDate startDate, Employee salesPerson,
 					Insurance reinsurance) {
 		this.underwritingPassed=underwritingPassed;
 		this.payment = payment;

@@ -178,7 +178,7 @@ public class InsuranceServiceImpl implements InsuranceService {
                             .path(targetLocation.toString())
                             .fileName(fileName)
                             .author(author)
-                            .date(Date.valueOf(LocalDate.now()))
+                            .date(LocalDate.now())
                             .build());
         }
         return true;
@@ -196,7 +196,7 @@ public class InsuranceServiceImpl implements InsuranceService {
                 Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
                 this.evaluationReportRepository.save(EvaluationReport.builder()
                         .path(targetLocation.toString())
-                        .date(Date.valueOf(LocalDate.now()))
+                        .date(LocalDate.now())
                         .insurance(insurance.get())
                         .build());
             }
@@ -220,7 +220,7 @@ public class InsuranceServiceImpl implements InsuranceService {
                 .author(employee)
                 .company(this.insuranceCompanyRepository.findByCompany("HANHWA"))
 //                .company(InsuranceCompany.HANHWA)
-                .date(Date.valueOf(LocalDate.now()))
+                .date(LocalDate.now())
                 .name(name)
                 .status(InsuranceStatus.DEVELOPING)
                 .type(InsuranceType.valueOf(type))

@@ -5,6 +5,7 @@ import system.insurance.backend.dbo.insurance.Insurance;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -25,10 +26,10 @@ public class UWPolicy {
     private String physicalPolicy;
     private String financialPolicy;
 
-    private Date date;
+    private LocalDate date;
 
     @Builder
-    public UWPolicy(Insurance insurance, String environmentalPolicy, String physicalPolicy, String financialPolicy, Date date){
+    public UWPolicy(Insurance insurance, String environmentalPolicy, String physicalPolicy, String financialPolicy, LocalDate date){
         this.insurance=insurance;
         this.environmentalPolicy=environmentalPolicy;
         this.physicalPolicy=physicalPolicy;

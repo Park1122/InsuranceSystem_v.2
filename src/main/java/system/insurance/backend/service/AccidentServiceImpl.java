@@ -13,6 +13,8 @@ import system.insurance.backend.repository.AccidentRepository;
 import system.insurance.backend.repository.ClientRepository;
 import system.insurance.backend.repository.ContractRepository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -45,7 +47,7 @@ public class AccidentServiceImpl implements AccidentService{
     }
 
     @Override
-    public boolean addAccident(int contractId, String accidentArea, AccidentType accidentType, Date date){
+    public boolean addAccident(int contractId, String accidentArea, AccidentType accidentType, LocalDateTime date){
         this.accidentRepository.save(Accident.builder()
                 .accidentArea(accidentArea)
                 .accidentType(accidentType)

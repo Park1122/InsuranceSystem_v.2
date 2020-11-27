@@ -70,7 +70,7 @@ public class InvestigationServiceImpl implements InvestigationService {
         Employee employee = employeeOptional.orElseThrow(NoEmployeeException::new);
         this.marketInvestigationRepository.save(MarketInvestigation.builder()
                 .author(employee)
-                .date(Date.valueOf(LocalDate.now()))
+                .date(LocalDate.now())
                 .needs(needs)
                 .targetClient(targetClient)
                 .title(title)
@@ -115,7 +115,7 @@ public class InvestigationServiceImpl implements InvestigationService {
         this.strategyInvestigationRepository.save(
                 StrategyInvestigation.builder()
                         .author(employee)
-                        .date(Date.valueOf(LocalDate.now()))
+                        .date(LocalDate.now())
                         .insurance(insurance)
                         .title(title)
                         .build()
