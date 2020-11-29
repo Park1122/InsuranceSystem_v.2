@@ -18,19 +18,13 @@ public class UWPolicy {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @OneToOne
-    @JoinColumn(name = "insurance_id", referencedColumnName = "id")
-    private Insurance insurance;
-
     private String environmentalPolicy;
     private String physicalPolicy;
     private String financialPolicy;
-
     private LocalDate date;
 
     @Builder
-    public UWPolicy(Insurance insurance, String environmentalPolicy, String physicalPolicy, String financialPolicy, LocalDate date){
-        this.insurance=insurance;
+    public UWPolicy( String environmentalPolicy, String physicalPolicy, String financialPolicy, LocalDate date){
         this.environmentalPolicy=environmentalPolicy;
         this.physicalPolicy=physicalPolicy;
         this.financialPolicy=financialPolicy;

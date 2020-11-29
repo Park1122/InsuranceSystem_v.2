@@ -8,6 +8,5 @@ import java.util.Optional;
 
 public interface UnderWritingPolicyRepository extends JpaRepository<UWPolicy, Integer> {
 
-    public Optional<UWPolicy> findByInsurance(Insurance insurance);
 
 }

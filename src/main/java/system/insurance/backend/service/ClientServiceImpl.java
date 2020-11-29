@@ -2,6 +2,7 @@ package system.insurance.backend.service;
 
 import org.springframework.stereotype.Service;
 import system.insurance.backend.dbo.client.Client;
+import system.insurance.backend.dbo.client.ClientType;
 import system.insurance.backend.dbo.client.RegisteredClient;
 import system.insurance.backend.dbo.client.RegisteringClient;
 import system.insurance.backend.dbo.contract.Contract;
@@ -28,12 +29,12 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public Map<Integer, ClientDTO> findAllRegisteringClient() {
-//        List<Client> clientList = this.clientRepository.findAllByType(ClientType.REGISTERING);
+        List<Client> clientList = this.clientRepository.findAllByType(ClientType.REGISTERING);
         Map<Integer, ClientDTO> clientDTOList = new HashMap<>();
-//        clientList.forEach(client -> {
-//            RegisteringClient client1 = (RegisteringClient) client;
-//            clientDTOList.put(client1.getId(), ClientDTO.builder().name(client1.getName()).build());
-//        });
+        clientList.forEach(client -> {
+            RegisteringClient client1 = (RegisteringClient) client;
+            clientDTOList.put(client1.getId(), ClientDTO.builder().name(client1.getName()).build());
+        });
         return clientDTOList;
     }
 

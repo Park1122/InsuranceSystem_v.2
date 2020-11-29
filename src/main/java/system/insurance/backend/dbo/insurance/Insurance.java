@@ -2,6 +2,7 @@ package system.insurance.backend.dbo.insurance;
 
 import lombok.*;
 import system.insurance.backend.dbo.employee.Employee;
+import system.insurance.backend.dbo.underWriting.UWPolicy;
 
 import javax.persistence.*;
 import java.sql.Date;
@@ -28,13 +29,18 @@ public class Insurance {
     private Employee author;
     private LocalDate date;
 
+    @OneToOne
+    @JoinColumn(name="uw_policy_id", referencedColumnName="id")
+    private UWPolicy uwPolicy;
+
     @Builder
-    public Insurance(InsuranceType type, InsuranceStatus status, InsuranceCompany company, String name, Employee author, LocalDate date) {
+    public Insurance(InsuranceType type, InsuranceStatus status, InsuranceCompany company, String name, Employee author, LocalDate date,UWPolicy uwPolicy) {
         this.type = type;
         this.status = status;
         this.company = company;
         this.name = name;
         this.author = author;
         this.date = date;
+        this.uwPolicy=uwPolicy;
     }
 }

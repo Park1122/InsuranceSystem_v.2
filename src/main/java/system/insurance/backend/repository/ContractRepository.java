@@ -3,6 +3,7 @@ package system.insurance.backend.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import system.insurance.backend.dbo.client.Client;
 import system.insurance.backend.dbo.contract.Contract;
+import system.insurance.backend.dbo.contract.UnderWritingStatus;
 import system.insurance.backend.dbo.employee.Employee;
 import system.insurance.backend.dbo.insurance.Insurance;
 
@@ -19,7 +20,7 @@ public interface ContractRepository extends JpaRepository<Contract, Integer> {
 
     List<Contract> findAllByInsurance(Insurance insurance);
 
-    Collection<Object> findAllByClientAndSalesPersonAndUnderwritingPassed(Client client, Employee employee, boolean underwritingPassed);
+    Collection<Object> findAllByClientAndSalesPersonAndUnderwritingPassed(Client client, Employee employee, UnderWritingStatus underwritingPassed);
 
     List<Contract> findAllByClient(Client client);
 

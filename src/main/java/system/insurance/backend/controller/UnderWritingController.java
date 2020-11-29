@@ -10,6 +10,7 @@ import system.insurance.backend.dto.UWPolicyDTO;
 import system.insurance.backend.service.UnderWritingService;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/uw")
@@ -22,10 +23,20 @@ public class UnderWritingController {
         this.underWritingService = underWritingService;
     }
 
+    //인수조건 리스트
     @GetMapping("/uw_policy/list")
     @ResponseBody
     public List<UWPolicyDTO> getUWPolicyDTOList() {
         System.out.println("list");return this.underWritingService.getUnderWritingPolicyList();
+    }
+
+    //인수조건 하나.
+    @GetMapping("/uw_policy")
+    @ResponseBody
+    public Optional<UWPolicyDTO> getUWPolicyDTO(@RequestParam(name = "pid") int pid) {
+        System.out.println("one"+pid);
+        return this.underWritingService.getUnderWritingPolicy(pid);
+//        return null;
     }
 
 

@@ -2,6 +2,7 @@ package system.insurance.backend.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
+import system.insurance.backend.dbo.contract.UnderWritingStatus;
 import system.insurance.backend.dbo.insurance.InsuranceType;
 
 @Getter
@@ -14,11 +15,11 @@ public class ContractDTO {
     private final InsuranceType insuranceType;
     private final boolean compensationProvision;
     private final int count;
-    private final boolean underWritingPassed;
+    private final UnderWritingStatus underWritingPassed;
 
 
     @Builder
-    public ContractDTO(int id, String clientName, InsuranceType insuranceType, boolean compensationProvision, int count, boolean underWritingPassed) {
+    public ContractDTO(int id, String clientName, InsuranceType insuranceType, boolean compensationProvision, int count, UnderWritingStatus underWritingPassed) {
         this.id = id;
         this.clientName=clientName;
         this.insuranceType = insuranceType;

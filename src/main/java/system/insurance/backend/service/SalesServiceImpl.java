@@ -6,6 +6,7 @@ import system.insurance.backend.dbo.contract.Contract;
 import system.insurance.backend.dbo.contract.PremiumPayment;
 import system.insurance.backend.dbo.counseling.ClientCounseling;
 import system.insurance.backend.dbo.employee.Employee;
+import system.insurance.backend.dbo.insurance.InsuranceStatus;
 import system.insurance.backend.exception.NoEmployeeException;
 import system.insurance.backend.dbo.instruction.Instruction;
 import system.insurance.backend.dbo.instruction.InstructionType;
@@ -88,7 +89,7 @@ public class SalesServiceImpl implements SalesService {
     public List<LossRateDTO> getLossRateListFor(int term) {
         List<LossRateDTO> lossRateList = new ArrayList<>();
 
-        List<Insurance> insuranceList = this.insuranceRepository.findAll();
+        List<Insurance> insuranceList = this.insuranceRepository.findAllByStatus(InsuranceStatus.ON_SALE);
         insuranceList.forEach((insurance) -> {
                     //이거는 회사가 보험금으로 지급한 액수.
                     int given = 10000000;
@@ -110,7 +111,6 @@ public class SalesServiceImpl implements SalesService {
                     //원래 0으로 계산하는 게 맞으나, 0으로 나누면 ArithmeticException이 발생하여 일단 넣음.
                     int got = 1000;
                     for (Contract contract : contractList) {
-
                         List<PremiumPayment> premiumPayments = this.premiumPaymentRepository.findAllByContract(contract);
                         for(PremiumPayment premiumPayment: premiumPayments){
                             if(Date.valueOf(premiumPayment.getDate()).after(target)){
@@ -119,10 +119,8 @@ public class SalesServiceImpl implements SalesService {
                         }
 
                     }
-//                    System.out.println(got*percent+"하하");
                     float lossRate = given / ((got * percent) / 100);
-                    System.out.println(given + "/ ((" + got + "* " + percent + ")/100)");
-
+//                    System.out.println(given + "/ ((" + got + "* " + percent + ")/100)");
                     lossRateList.add(
                             LossRateDTO.builder()
                                     .companyName(insurance.getCompany().getCompanyName())
@@ -131,12 +129,9 @@ public class SalesServiceImpl implements SalesService {
                                     .build()
                     );
 
-                    System.out.println(insurance.getName() + lossRate);
+//                    System.out.println(insurance.getName() + lossRate);
                 }
         );
-//        Optional<InsuranceCompany> insuranceCompany= insuranceCompanyRepository.
-
-
         return lossRateList;
     }
 }

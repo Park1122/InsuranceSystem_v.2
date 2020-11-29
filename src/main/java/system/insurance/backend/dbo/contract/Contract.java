@@ -28,7 +28,8 @@ public class Contract implements Serializable{
 	@JoinColumn(name="client_id",referencedColumnName = "id")
 	private Client client;
 
-	private boolean underwritingPassed;
+	@Enumerated(EnumType.STRING)
+	private UnderWritingStatus underwritingPassed;
 
 	@ColumnDefault("0")
 	private int payment;
@@ -47,7 +48,7 @@ public class Contract implements Serializable{
 	@JoinColumn(name="reinsurance_id",referencedColumnName = "id")
 	private Insurance reinsurance;
 	@Builder
-	public Contract( boolean underwritingPassed, int payment, LocalDate dueDate, boolean compensationProvision,
+	public Contract( UnderWritingStatus underwritingPassed, int payment, LocalDate dueDate, boolean compensationProvision,
 					int paid, Insurance insurance, LocalDate startDate, Employee salesPerson,
 					Insurance reinsurance) {
 		this.underwritingPassed=underwritingPassed;
