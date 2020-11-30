@@ -38,7 +38,7 @@ public class ContractController {
     @GetMapping("/loss_rate")
     @ResponseBody
     public List<LossRateDTO> getLossRateFor(@RequestParam("term")int term){
-        System.out.println("lossRate-"+term);
+//        System.out.println("lossRate-"+term);
         return this.salesService.getLossRateListFor(term);
     }
 

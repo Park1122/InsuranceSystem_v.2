@@ -10,7 +10,9 @@ import system.insurance.backend.service.MailService;
 import system.insurance.backend.service.SalesService;
 
 import javax.mail.MessagingException;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/client")
@@ -23,6 +25,16 @@ public class ClientController {
         this.clientService = clientService;
         this.salesService = salesService;
         this.mailService = mailService;
+    }
+
+    @GetMapping("/unregistered/search")
+    public ResponseEntity<ClientDTO> findAllUnregisteredClientList(@RequestParam(name = "id")int cid){
+        return ResponseEntity.ok(this.clientService.findUnregisteredClientByID(cid));
+    }
+
+    @GetMapping("/unregistered/list")
+    public List<ClientDTO> findAllUnregisteredClientList(){
+        return this.clientService.findAllUnregisteredClint();
     }
 
     @GetMapping("/registering/list")

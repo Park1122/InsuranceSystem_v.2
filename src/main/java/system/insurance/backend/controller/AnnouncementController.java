@@ -21,6 +21,7 @@ public class AnnouncementController {
     }
 
 
+    //공지 전체 목록.
     @GetMapping("/info")
     @ResponseBody
     @JsonInclude(Include.NON_NULL)

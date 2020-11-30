@@ -27,14 +27,15 @@ public class UnderWritingController {
     @GetMapping("/uw_policy/list")
     @ResponseBody
     public List<UWPolicyDTO> getUWPolicyDTOList() {
-        System.out.println("list");return this.underWritingService.getUnderWritingPolicyList();
+//        System.out.println("list");
+        return this.underWritingService.getUnderWritingPolicyList();
     }
 
     //인수조건 하나.
     @GetMapping("/uw_policy")
     @ResponseBody
     public Optional<UWPolicyDTO> getUWPolicyDTO(@RequestParam(name = "pid") int pid) {
-        System.out.println("one"+pid);
+//        System.out.println("one"+pid);
         return this.underWritingService.getUnderWritingPolicy(pid);
 //        return null;
     }
@@ -52,8 +53,6 @@ public class UnderWritingController {
     @ResponseBody
     public List<ContractDTO> getUnPassedContractDTOList(@RequestParam(name = "eid") int id) {
 
-
-
         try {
             return this.underWritingService.getUnPassedContractList(id);
         } catch (NoEmployeeException e) {
@@ -66,7 +65,7 @@ public class UnderWritingController {
     @GetMapping("/factor_manage/client")
     @ResponseBody
     public ResponseEntity<ContractDetailDTO> getClientDTO(@RequestParam(name="contractId") int contractId) {
-        System.out.println("ㅇㅇㅇ");
+//        System.out.println("ㅇㅇㅇ");
         return this.underWritingService.getContractDetailFactors(contractId);
     }
 

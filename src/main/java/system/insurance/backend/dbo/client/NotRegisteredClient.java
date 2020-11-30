@@ -1,12 +1,8 @@
 package system.insurance.backend.dbo.client;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
+import javax.persistence.*;
 
 
 @Getter
@@ -16,8 +12,11 @@ import javax.persistence.Entity;
 @Entity
 @DiscriminatorValue("NOT_REGISTERED")
 public class NotRegisteredClient extends Client {
-    private String gift;
+    @JoinColumn(name="gift",referencedColumnName = "id")
+    @OneToOne
+    private ClientGift gift;
 
+    @Builder
     public NotRegisteredClient(String gift) {
     }
 }

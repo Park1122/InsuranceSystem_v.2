@@ -1,10 +1,7 @@
 package system.insurance.backend.service;
 
 import org.springframework.stereotype.Service;
-import system.insurance.backend.dbo.client.Client;
-import system.insurance.backend.dbo.client.ClientType;
-import system.insurance.backend.dbo.client.RegisteredClient;
-import system.insurance.backend.dbo.client.RegisteringClient;
+import system.insurance.backend.dbo.client.*;
 import system.insurance.backend.dbo.contract.Contract;
 import system.insurance.backend.exception.InvalidIdentifierException;
 import system.insurance.backend.exception.NoClientException;
@@ -36,6 +33,42 @@ public class ClientServiceImpl implements ClientService {
             clientDTOList.put(client1.getId(), ClientDTO.builder().name(client1.getName()).build());
         });
         return clientDTOList;
+    }
+
+    @Override
+    public List<ClientDTO> findAllUnregisteredClint() {
+        List<Client> clientList = this.clientRepository.findAll();
+        List<ClientDTO> clientDTOList = new ArrayList<>() ;
+        clientList.forEach((client)-> {
+            if(client instanceof NotRegisteredClient) {
+                System.out.println(client.getName()+" 가망고객님.");
+                clientDTOList.add(
+                        ClientDTO.builder()
+                                .name(client.getName())
+                                .id(client.getId())
+                                .age(client.getAge())
+                                .sex(client.getSex().getDesc())
+                                .build());
+            }
+        });
+        return clientDTOList;
+    }
+
+    @Override
+    public ClientDTO findUnregisteredClientByID(int cid) {
+        Optional<Client> client = this.clientRepository.findById(cid);
+        if(client.isPresent()) {
+         Client client1= client.get();
+            return ClientDTO
+                    .builder()
+                    .contact(client1.getContact())
+                    .age(client1.getAge())
+                    .sex(client1.getSex().getDesc())
+                    .name(client1.getName())
+                    .email(client1.getEmail())
+                    .build();
+        }
+        return null;
     }
 
     @Override
@@ -86,6 +119,8 @@ public class ClientServiceImpl implements ClientService {
         if (client.isPresent()) return getClientDTO(client.get());
         return ClientDTO.builder().build();
     }
+
+
 
     private ClientDTO getClientDTO(Client client) {
         RegisteredClient registeredClient = (RegisteredClient) client;

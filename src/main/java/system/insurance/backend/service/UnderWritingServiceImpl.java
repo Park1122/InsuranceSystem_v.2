@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import system.insurance.backend.dbo.client.RegisteredClient;
 import system.insurance.backend.dbo.contract.Contract;
+import system.insurance.backend.dbo.contract.UnderWritingStatus;
 import system.insurance.backend.dbo.employee.Employee;
 import system.insurance.backend.dbo.insurance.InsuranceStatus;
 import system.insurance.backend.exception.NoEmployeeException;
@@ -155,7 +156,7 @@ public class UnderWritingServiceImpl implements UnderWritingService {
         Optional<Employee> opt = this.employeeRepository.findById(id);
         if (opt.isPresent()) {
             Employee employee = opt.get();
-            List<Contract> contracts = this.contractRepository.findAllBySalesPerson(employee);
+            List<Contract> contracts = this.contractRepository.findAllBySalesPersonAndUnderwritingPassed(employee, UnderWritingStatus.ONPROGRESS);
             contracts.forEach((contract) -> {
                 contractList.add(
                         ContractDTO.builder()

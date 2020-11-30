@@ -3,6 +3,7 @@ package system.insurance.backend.service;
 import system.insurance.backend.exception.NoClientException;
 import system.insurance.backend.dto.ClientDTO;
 
+import java.util.List;
 import java.util.Map;
 
 public interface ClientService {
@@ -16,4 +17,8 @@ public interface ClientService {
     ClientDTO searchRegisteredByName(String name);
     ClientDTO searchRegisteredByContact(String contact);
     ClientDTO searchRegisteredByRRN(String rrn);
+
+    List<ClientDTO> findAllUnregisteredClint();
+
+    ClientDTO findUnregisteredClientByID(int cid);
 }
