@@ -1,6 +1,5 @@
 package system.insurance.backend.dbo.contract;
 
-import com.sun.javafx.beans.IDProperty;
 import lombok.*;
 
 import javax.persistence.*;
