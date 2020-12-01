@@ -1,12 +1,14 @@
 package system.insurance.backend.service;
 
 import org.springframework.http.ResponseEntity;
+import system.insurance.backend.dto.ClientFactorDTO;
 import system.insurance.backend.exception.NoEmployeeException;
 import system.insurance.backend.dto.ContractDTO;
 import system.insurance.backend.dto.ContractDetailDTO;
 import system.insurance.backend.dto.UWPolicyDTO;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface UnderWritingService {
@@ -19,4 +21,6 @@ public interface UnderWritingService {
 
     ResponseEntity<ContractDetailDTO> getContractDetailFactors(int contractId);
     public Optional<UWPolicyDTO> getUnderWritingPolicy(int pid);
+
+    Map<Integer, ClientFactorDTO> getOnProgressContractAndLessFactorCustomers(int id);
 }

@@ -8,6 +8,7 @@ import system.insurance.backend.dbo.contract.Contract;
 import system.insurance.backend.dbo.contract.UnderWritingStatus;
 import system.insurance.backend.dbo.employee.Employee;
 import system.insurance.backend.dbo.insurance.InsuranceStatus;
+import system.insurance.backend.dto.ClientFactorDTO;
 import system.insurance.backend.exception.NoEmployeeException;
 import system.insurance.backend.dbo.insurance.Insurance;
 import system.insurance.backend.dto.ContractDTO;
@@ -18,9 +19,8 @@ import system.insurance.backend.repository.EmployeeRepository;
 import system.insurance.backend.repository.InsuranceRepository;
 import system.insurance.backend.repository.UnderWritingPolicyRepository;
 import system.insurance.backend.dbo.underWriting.UWPolicy;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+
+import java.util.*;
 
 @Service
 public class UnderWritingServiceImpl implements UnderWritingService {
@@ -96,13 +96,13 @@ public class UnderWritingServiceImpl implements UnderWritingService {
                 UWPolicy uwPolicy = insurance.getUwPolicy();
                 uwPolicyDTOList.add(
                         UWPolicyDTO.builder()
-                        .uwPolicyId(uwPolicy.getId())
-                        .name(insurance.getName())
-                        .date(uwPolicy.getDate())
-                        .environmentalPolicy(uwPolicy.getEnvironmentalPolicy())
-                        .physicalPolicy(uwPolicy.getPhysicalPolicy())
-                        .financialPolicy(uwPolicy.getFinancialPolicy())
-                        .build()
+                                .uwPolicyId(uwPolicy.getId())
+                                .name(insurance.getName())
+                                .date(uwPolicy.getDate())
+                                .environmentalPolicy(uwPolicy.getEnvironmentalPolicy())
+                                .physicalPolicy(uwPolicy.getPhysicalPolicy())
+                                .financialPolicy(uwPolicy.getFinancialPolicy())
+                                .build()
                 );
             }
         });
@@ -142,6 +142,36 @@ public class UnderWritingServiceImpl implements UnderWritingService {
 //        }
 //        System.out.println("없읍");
         return Optional.empty();
+    }
+
+    @Override
+    public Map<Integer, ClientFactorDTO> getOnProgressContractAndLessFactorCustomers(int id) {
+        Optional<Employee> opt = this.employeeRepository.findById(id);
+
+        Map<Integer,ClientFactorDTO> dtoMap= new HashMap<Integer,ClientFactorDTO>();
+        if (opt.isPresent()) {
+            Employee employee = opt.get();
+            List<Contract> contracts = this.contractRepository.findAllBySalesPersonAndUnderwritingPassed(employee, UnderWritingStatus.ONPROGRESS);
+            contracts.forEach((contract) -> {
+                        if (contract.getClient() instanceof RegisteredClient) {
+                            RegisteredClient client = (RegisteredClient) contract.getClient();
+                            if (client.getEnvironmentalFactor() == null &&
+                                    client.getFinancialFactor() == null &&
+                                    client.getPhysicalFactor() == null) {
+                        dtoMap.put(client.getId(),
+                                ClientFactorDTO.builder()
+                                        .clientId(client.getId())
+                                        .insuranceType(contract.getInsurance().getType().getDescription())
+                                        .insuranceName(contract.getInsurance().getName())
+                                        .build());
+                            }
+
+                        }
+
+                    }
+            );
+        }
+        return null;
     }
 
     @Override

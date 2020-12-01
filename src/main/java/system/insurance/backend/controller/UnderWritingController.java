@@ -3,6 +3,7 @@ package system.insurance.backend.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import system.insurance.backend.dto.ClientFactorDTO;
 import system.insurance.backend.exception.NoEmployeeException;
 import system.insurance.backend.dto.ContractDTO;
 import system.insurance.backend.dto.ContractDetailDTO;
@@ -10,6 +11,7 @@ import system.insurance.backend.dto.UWPolicyDTO;
 import system.insurance.backend.service.UnderWritingService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -21,6 +23,13 @@ public class UnderWritingController {
     @Autowired
     public UnderWritingController(UnderWritingService underWritingService) {
         this.underWritingService = underWritingService;
+    }
+
+    //인수조건이 아직 없고, Contract가 onProgress인 고객목록
+    @GetMapping("/uw_policy/getEmptyFactorCustomers")
+    @ResponseBody
+    public Map<Integer, ClientFactorDTO> getOnProgressContractAndLessFactorCustomers(@RequestParam(name = "eid") int id) {
+        return this.underWritingService.getOnProgressContractAndLessFactorCustomers(id);
     }
 
     //인수조건 리스트
