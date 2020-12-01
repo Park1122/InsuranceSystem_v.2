@@ -28,13 +28,13 @@ public class AccidentController {
     }
 
     @PostMapping("/new_accident/accident_register")
-    public boolean registerAccident(@RequestParam(name = "contractId")int contractId,@RequestParam(name = "accidentArea") String accidentArea,
-                                    @RequestParam(name = "accidentType")AccidentType accidentType, @RequestParam(name = "date")Date date) {
+    public boolean registerAccident(@RequestParam(name = "contractId") int contractId, @RequestParam(name = "accidentArea") String accidentArea,
+                                    @RequestParam(name = "accidentType") AccidentType accidentType, @RequestParam(name = "date") Date date) {
         return this.accidentService.addAccident(contractId, accidentArea, accidentType, date);
     }
 
     @PostMapping("/handle_accident")
-    public boolean handleAccidentArea(@RequestParam(name = "accidentId")int accidentId, @RequestParam(name = "scenario") String scenario,
+    public boolean handleAccidentArea(@RequestParam(name = "accidentId") int accidentId, @RequestParam(name = "scenario") String scenario,
                                       @RequestParam(name = "damage") String damage, @RequestParam(name = "picture") String picture,
                                       @RequestParam(name = "video") String video, @RequestParam(name = "record") String record,
                                       @RequestParam(name = "processingCost") String processingCost) {
