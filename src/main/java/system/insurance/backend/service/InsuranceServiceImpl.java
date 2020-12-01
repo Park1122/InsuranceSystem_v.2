@@ -247,84 +247,84 @@ public class InsuranceServiceImpl implements InsuranceService {
         InsuranceType insuranceType = InsuranceType.valueOf(type);
         Long calculatePay = 0L;
         if (insuranceType.equals(InsuranceType.FIRE)) {
-            calculatePay = this.firePremiumRate(payIn, clientJob);
+            calculatePay = (long) Math.round(payIn * this.firePremiumRate(clientJob));
         } else if (insuranceType.equals(InsuranceType.INJURY)) {
-            calculatePay = this.injuryPremiumRate(payIn, clientJob);
+            calculatePay = (long) Math.round(payIn*this.injuryPremiumRate(clientJob));
         } else if (insuranceType.equals(InsuranceType.DEATH)) {
-            calculatePay = this.deathPremiumRate(payIn, clientJob);
+            calculatePay = (long) Math.round(payIn*this.deathPremiumRate(clientJob));
         }
         return calculatePay;
     }
-    private Long firePremiumRate(Long payIn, Job clientJob) {
-        Long payment = payIn;
+    private float firePremiumRate(Job clientJob) {
+        float rate = 1.0f;
         switch (clientJob) {
             case DRIVER:
             case OFFICE_WORKER:
-                payment = (Long)Math.round(payment * 1.2);
+                rate *= 1.2;
                 break;
             case HOUSEWIFE:
-                payment = (Long)Math.round(payment * 1.1);
+                rate *= 1.1;
                 break;
             case STUDENT:
             case SOLDIER:
             case NONE:
-                payment = (Long)Math.round(payment * 1.0);
+                rate *= 1.0;
                 break;
             case SELF_EMPLOYMENT:
-                payment = (Long)Math.round(payment * 1.4);
+                rate *= 1.4;
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + clientJob);
         }
-        return payment;
+        return rate;
     }
-    private Long injuryPremiumRate(Long payIn, Job clientJob) {
-        Long payment = payIn;
+    private float injuryPremiumRate(Job clientJob) {
+        float rate = 1.0f;
         switch (clientJob) {
             case DRIVER:
             case SELF_EMPLOYMENT:
-                payment = (Long)Math.round(payment * 1.2);
+                rate *= 1.2;
                 break;
             case HOUSEWIFE:
             case OFFICE_WORKER:
-                payment = (Long)Math.round(payment * 1.1);
+                rate *= 1.1;
                 break;
             case STUDENT:
             case NONE:
-                payment = (Long)Math.round(payment * 1.0);
+                rate *= 1.0;
                 break;
             case SOLDIER:
-                payment = (Long)Math.round(payment * 1.3);
+                rate *= 1.3;
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + clientJob);
         }
-        return payment;
+        return rate;
     }
-    private Long deathPremiumRate(Long payIn, Job clientJob) {
-        Long payment = payIn;
+    private float deathPremiumRate(Job clientJob) {
+        float rate = 1.0f;
         switch (clientJob) {
             case DRIVER:
-                payment = (Long)Math.round(payment * 1.3);
+                rate *= 1.3;
                 break;
             case HOUSEWIFE:
-                payment = (Long)Math.round(payment * 1.1);
+                rate *= 1.1;
                 break;
             case STUDENT:
             case NONE:
-                payment = (Long)Math.round(payment * 1.0);
+                rate *= 1.0;
                 break;
             case SOLDIER:
-                payment = (Long)Math.round(payment * 1.4);
+                rate *= 1.4;
                 break;
             case OFFICE_WORKER:
             case SELF_EMPLOYMENT:
-                payment = (Long)Math.round(payment * 1.2);
+                rate *= 1.2;
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + clientJob);
         }
-        return payment;
+        return rate;
     }
 
 }
