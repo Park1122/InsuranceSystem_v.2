@@ -1,12 +1,14 @@
 package system.insurance.backend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import system.insurance.backend.dbo.contract.Contract;
 import system.insurance.backend.dbo.contract.PremiumPayment;
 import system.insurance.backend.dbo.counseling.ClientCounseling;
 import system.insurance.backend.dbo.employee.Employee;
 import system.insurance.backend.dbo.insurance.InsuranceStatus;
+import system.insurance.backend.dto.CounselingDTO;
 import system.insurance.backend.exception.NoEmployeeException;
 import system.insurance.backend.dbo.instruction.Instruction;
 import system.insurance.backend.dbo.instruction.InstructionType;
@@ -72,7 +74,44 @@ public class SalesServiceImpl implements SalesService {
         return instructionDTOList;
     }
 
+    @Override
+    public List<CounselingDTO> getRecordsByEmployeeId(int eid) throws NoEmployeeException{
+        Optional<Employee> employee = this.employeeRepository.findById(eid);
+        Employee employee1 = employee.orElseThrow(NoEmployeeException::new);
 
+        List<CounselingDTO> dtoList= new ArrayList<>();
+
+        List<ClientCounseling> counselingList = this.clientCounselingRepository.findAllByCounselor(employee1);
+        counselingList.forEach((counseling)->{
+                    dtoList.add(CounselingDTO
+                            .builder()
+                            .id(counseling.getId())
+                            .clientName(counseling.getClient().getName())
+                            .content(counseling.getContent())
+                            .date(counseling.getDate())
+                            .build());
+        });
+
+        return dtoList;
+    }
+
+    @Override
+    public CounselingDTO getRecordByCounselingId(int id) {
+        Optional<ClientCounseling> temp = this.clientCounselingRepository.findById(id);
+
+        if(temp.isPresent()){
+            ClientCounseling counseling= temp.get();
+            return CounselingDTO
+                    .builder()
+                    .id(counseling.getId())
+                    .clientName(counseling.getClient().getName())
+                    .content(counseling.getContent())
+                    .date(counseling.getDate())
+                    .build();
+        }
+
+        return null;
+    }
 
     @Override
     public boolean saveCounselingRecord(String content, int eid) throws NoEmployeeException {
@@ -91,8 +130,13 @@ public class SalesServiceImpl implements SalesService {
 
         List<Insurance> insuranceList = this.insuranceRepository.findAllByStatus(InsuranceStatus.ON_SALE);
         insuranceList.forEach((insurance) -> {
-                    //이거는 회사가 보험금으로 지급한 액수.
-                    int given = 10000000;
+
+
+                    //이거는 회사가 보험금으로 지급한 액수.임시로 넣음
+                    int given = 800000*term;
+                    //임시로 넣은 보험금 지급 액수. 보험금 지급 데이터가 생기면 그때 수정 필요
+
+
                     int percent = insurance.getCompany().getSupplementary_insurance_premium_percentage();
 
                     List<Contract> contractList = this.contractRepository.findAllByInsurance(insurance);
@@ -134,4 +178,6 @@ public class SalesServiceImpl implements SalesService {
         );
         return lossRateList;
     }
+
+
 }

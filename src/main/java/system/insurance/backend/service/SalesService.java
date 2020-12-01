@@ -1,5 +1,7 @@
 package system.insurance.backend.service;
 
+import org.springframework.http.ResponseEntity;
+import system.insurance.backend.dto.CounselingDTO;
 import system.insurance.backend.exception.NoEmployeeException;
 import system.insurance.backend.dto.InstructionDTO;
 import system.insurance.backend.dto.LossRateDTO;
@@ -15,4 +17,8 @@ public interface SalesService{
 
 
     List<LossRateDTO> getLossRateListFor(int term);
+
+    List<CounselingDTO> getRecordsByEmployeeId(int eid) throws NoEmployeeException;
+
+    CounselingDTO getRecordByCounselingId(int id);
 }

@@ -42,12 +42,16 @@ public class ClientServiceImpl implements ClientService {
         clientList.forEach((client)-> {
             if(client instanceof NotRegisteredClient) {
                 System.out.println(client.getName()+" 가망고객님.");
+
+                String gift="";
+                if(((NotRegisteredClient) client).getGift()!=null) gift= ((NotRegisteredClient) client).getGift().getGift();
                 clientDTOList.add(
                         ClientDTO.builder()
                                 .name(client.getName())
                                 .id(client.getId())
                                 .age(client.getAge())
                                 .sex(client.getSex().getDesc())
+                                .gift(gift)
                                 .build());
             }
         });

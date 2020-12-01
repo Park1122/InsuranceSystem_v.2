@@ -2,6 +2,7 @@ package system.insurance.backend.dbo.counseling;
 
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import system.insurance.backend.dbo.client.Client;
 import system.insurance.backend.dbo.employee.Employee;
@@ -11,6 +12,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "client_counseling")
 public class ClientCounseling {

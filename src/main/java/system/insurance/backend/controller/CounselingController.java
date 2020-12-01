@@ -1,11 +1,12 @@
 package system.insurance.backend.controller;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import system.insurance.backend.dto.CounselingDTO;
 import system.insurance.backend.exception.NoEmployeeException;
 import system.insurance.backend.service.SalesService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/counseling")
@@ -24,6 +25,21 @@ public class CounselingController {
             e.printStackTrace();
             return false;
         }
+    }
+
+    @GetMapping("/record/get")
+    public List<CounselingDTO> getRecords(@RequestParam(name = "eid")int eid){
+        try {
+           return this.salesService.getRecordsByEmployeeId(eid);
+        } catch (NoEmployeeException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @GetMapping("/record/search")
+    public ResponseEntity<CounselingDTO> getRecordById(@RequestParam(name = "id")int id){
+            return ResponseEntity.ok( this.salesService.getRecordByCounselingId(id));
     }
 
 
