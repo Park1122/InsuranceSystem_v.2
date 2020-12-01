@@ -26,7 +26,5 @@ public interface ContractRepository extends JpaRepository<Contract, Integer> {
 
     List<Contract> findAllBySalesPersonAndUnderwritingPassed(Employee employee, UnderWritingStatus onprogress);
 
-    List<Contract> findAllByClient(Client client);
-
 //    List<Contract> findAll();
 }
