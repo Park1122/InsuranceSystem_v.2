@@ -1,10 +1,7 @@
 package system.insurance.backend.dbo.client;
 
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -20,6 +17,7 @@ public class FinancialFactor {
     private long property;
     private int creditRating;
 
+    @Builder
     public FinancialFactor(long income, long property, int creditRating) {
         this.income = income;
         this.property = property;

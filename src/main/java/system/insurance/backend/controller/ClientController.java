@@ -27,6 +27,18 @@ public class ClientController {
         this.mailService = mailService;
     }
 
+    @PostMapping("/save/Factors")
+    public void saveClientFactors(@RequestParam(name="cid") int cid,@RequestParam(name="physicalSmokeFrequency") String physicalSmokeFrequency,@RequestParam(name="physicalDrinkingFrequency") String physicalDrinkingFrequency,
+                                  @RequestParam(name="environmentalDangerousArea") String environmentalDangerousArea,@RequestParam(name="environmentalDangerousHobby") String environmentalDangerousHobby,@RequestParam(name="environmentalJob") String environmentalJob,
+                                  @RequestParam(name="financialIncome") long financialIncome,@RequestParam(name="financialCreditRating") int financialCreditRating,@RequestParam(name="financialProperty") long financialProperty){
+        try {
+            System.out.println("post come");
+            this.clientService.saveClientFactors(cid, physicalSmokeFrequency, physicalDrinkingFrequency, environmentalDangerousArea, environmentalDangerousHobby, environmentalJob, financialIncome, financialCreditRating, financialProperty);
+        } catch (NoClientException e) {
+            e.printStackTrace();
+        }
+    }
+
     @GetMapping("/unregistered/search")
     public ResponseEntity<ClientDTO> findAllUnregisteredClientList(@RequestParam(name = "id")int cid){
         return ResponseEntity.ok(this.clientService.findUnregisteredClientByID(cid));

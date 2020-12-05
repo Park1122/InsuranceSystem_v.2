@@ -27,8 +27,8 @@ public class UnderWritingController {
 
     @GetMapping("factor/info")
     @ResponseBody
-    public ResponseEntity<ClientFactorInfoDTO> getClientFactorInfos(){
-        return ResponseEntity.ok(this.clientService.getClientFactorInfos());
+    public ResponseEntity<ClientFactorInfoDTO> getClientFactorInfos(@RequestParam(name = "eid") int eid){
+        return ResponseEntity.ok(this.clientService.getClientFactorInfos(eid));
     }
 
 

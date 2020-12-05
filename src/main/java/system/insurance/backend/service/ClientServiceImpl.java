@@ -3,14 +3,14 @@ package system.insurance.backend.service;
 import org.springframework.stereotype.Service;
 import system.insurance.backend.dbo.client.*;
 import system.insurance.backend.dbo.contract.Contract;
+import system.insurance.backend.dbo.contract.UnderWritingStatus;
+import system.insurance.backend.dbo.employee.Employee;
 import system.insurance.backend.dto.ClientFactorDTO;
 import system.insurance.backend.dto.ClientFactorInfoDTO;
 import system.insurance.backend.exception.InvalidIdentifierException;
 import system.insurance.backend.exception.NoClientException;
 import system.insurance.backend.dto.ClientDTO;
-import system.insurance.backend.repository.ClientRepository;
-import system.insurance.backend.repository.ContractRepository;
-import system.insurance.backend.repository.RegisteredClientRepository;
+import system.insurance.backend.repository.*;
 
 import java.util.*;
 
@@ -20,10 +20,19 @@ public class ClientServiceImpl implements ClientService {
     private final RegisteredClientRepository registeredClientRepository;
     private final ContractRepository contractRepository;
 
-    public ClientServiceImpl(ClientRepository clientRepository, RegisteredClientRepository registeredClientRepository, ContractRepository contractRepository) {
+    private final PhysicalFactorRepository physicalFactorRepository;
+    private final EnvironmentalFactorRepository environmentalFactorRepository;
+    private final FinancialFactorRepository financialFactorRepository;
+    private final EmployeeRepository employeeRepository;
+
+    public ClientServiceImpl(EmployeeRepository employeeRepository,ClientRepository clientRepository, RegisteredClientRepository registeredClientRepository, ContractRepository contractRepository,PhysicalFactorRepository physicalFactorRepository,EnvironmentalFactorRepository environmentalFactorRepository,FinancialFactorRepository financialFactorRepository) {
         this.clientRepository = clientRepository;
         this.registeredClientRepository = registeredClientRepository;
         this.contractRepository = contractRepository;
+        this.physicalFactorRepository=physicalFactorRepository;
+        this.environmentalFactorRepository=environmentalFactorRepository;
+        this.financialFactorRepository=financialFactorRepository;
+        this.employeeRepository=employeeRepository;
     }
 
     @Override
@@ -78,7 +87,37 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public ClientFactorInfoDTO getClientFactorInfos() {
+    public List<Client> getOnProgressContractAndLessFactorCustomers(int id) {
+        Optional<Employee> opt = this.employeeRepository.findById(id);
+
+        List<Client> clientList = new ArrayList<>();
+        if (opt.isPresent()) {
+            Employee employee = opt.get();
+            List<Contract> contracts = this.contractRepository.findAllBySalesPersonAndUnderwritingPassed(employee, UnderWritingStatus.ONPROGRESS);
+            contracts.forEach((contract) -> {
+                        if (contract.getClient() instanceof RegisteredClient) {
+                            RegisteredClient client = (RegisteredClient) contract.getClient();
+                            if (client.getEnvironmentalFactor() == null ||
+                                    client.getFinancialFactor() == null ||
+                                    client.getPhysicalFactor() == null) {
+                               clientList.add(client);
+                            }
+
+                        }
+
+                    }
+            );
+        }
+        return clientList;
+    }
+
+    @Override
+    public ClientFactorInfoDTO getClientFactorInfos(int eid) {
+
+        Map<String,String> clientList = new HashMap<>();
+        for(Client client: this.getOnProgressContractAndLessFactorCustomers(eid)){
+            clientList.put(client.getId()+"", client.getName()+" "+client.getSex());
+        }
 
         Map<String,String> smokeList = new HashMap<>();
         for(SmokeFrequency smokeFrequency: SmokeFrequency.values()){
@@ -95,7 +134,43 @@ public class ClientServiceImpl implements ClientService {
             jobList.put(job.name(), job.getDescription());
         }
 
-        return ClientFactorInfoDTO.builder().smokeList(smokeList).drinkList(drinkList).jobList(jobList).build();
+        return ClientFactorInfoDTO.builder().clientList(clientList).smokeList(smokeList).drinkList(drinkList).jobList(jobList).build();
+    }
+
+    @Override
+    public void saveClientFactors(int cid, String physicalSmokeFrequency, String physicalDrinkingFrequency, String environmentalDangerousArea, String environmentalDangerousHobby, String environmentalJob, long financialIncome, int financialCreditRating, long financialProperty) throws NoClientException{
+        Optional<Client> client = this.clientRepository.findById(cid);
+        RegisteringClient client1 = (RegisteredClient) client.orElseThrow(NoClientException::new);
+
+        //////////
+        SmokeFrequency smokeFrequency=null;
+        for(SmokeFrequency sFreq : SmokeFrequency.values()){
+            if (sFreq.name().equals(physicalSmokeFrequency)){smokeFrequency=sFreq;}
+        }
+        DrinkingFrequency drinkingFrequency=null;
+        for(DrinkingFrequency dFreq: DrinkingFrequency.values()){
+            if(dFreq.name().equals(physicalDrinkingFrequency)){drinkingFrequency=dFreq;}
+        }
+        PhysicalFactor physicalFactor= PhysicalFactor.builder().smokeFrequency(smokeFrequency).drinkingFrequency(drinkingFrequency).build();
+        this.physicalFactorRepository.save(physicalFactor);
+        client1.setPhysicalFactor(physicalFactor);
+
+        //////////
+        Job job=null;
+        for(Job j: Job.values()){
+            if(j.name().equals(environmentalJob)){job=j;}
+        }
+        EnvironmentalFactor environmentalFactor = EnvironmentalFactor.builder().dangerousArea(environmentalDangerousArea).dangerousHobby(environmentalDangerousHobby).job(job).build();
+        this.environmentalFactorRepository.save(environmentalFactor);
+        client1.setEnvironmentalFactor(environmentalFactor);
+
+        //////////
+        FinancialFactor financialFactor = FinancialFactor.builder().income(financialIncome).creditRating(financialCreditRating).property(financialProperty).build();
+        this.financialFactorRepository.save(financialFactor);
+        client1.setFinancialFactor(financialFactor);
+
+        this.clientRepository.save(client1);
+
     }
 
     @Override

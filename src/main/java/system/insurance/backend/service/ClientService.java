@@ -1,6 +1,7 @@
 package system.insurance.backend.service;
 
 import org.springframework.http.ResponseEntity;
+import system.insurance.backend.dbo.client.Client;
 import system.insurance.backend.dto.ClientFactorInfoDTO;
 import system.insurance.backend.exception.NoClientException;
 import system.insurance.backend.dto.ClientDTO;
@@ -23,6 +24,8 @@ public interface ClientService {
     List<ClientDTO> findAllUnregisteredClint();
 
     ClientDTO findUnregisteredClientByID(int cid);
+    List<Client> getOnProgressContractAndLessFactorCustomers(int id);
+    ClientFactorInfoDTO getClientFactorInfos(int eid);
 
-    ClientFactorInfoDTO getClientFactorInfos();
+    void saveClientFactors(int cid, String physicalSmokeFrequency, String physicalDrinkingFrequency, String environmentalDangerousArea, String environmentalDangerousHobby, String environmentalJob, long financialIncome, int financialCreditRating, long financialProperty) throws NoClientException;
 }
