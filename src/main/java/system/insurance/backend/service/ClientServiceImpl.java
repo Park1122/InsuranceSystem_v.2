@@ -3,6 +3,8 @@ package system.insurance.backend.service;
 import org.springframework.stereotype.Service;
 import system.insurance.backend.dbo.client.*;
 import system.insurance.backend.dbo.contract.Contract;
+import system.insurance.backend.dto.ClientFactorDTO;
+import system.insurance.backend.dto.ClientFactorInfoDTO;
 import system.insurance.backend.exception.InvalidIdentifierException;
 import system.insurance.backend.exception.NoClientException;
 import system.insurance.backend.dto.ClientDTO;
@@ -73,6 +75,27 @@ public class ClientServiceImpl implements ClientService {
                     .build();
         }
         return null;
+    }
+
+    @Override
+    public ClientFactorInfoDTO getClientFactorInfos() {
+
+        Map<String,String> smokeList = new HashMap<>();
+        for(SmokeFrequency smokeFrequency: SmokeFrequency.values()){
+            smokeList.put(smokeFrequency.name(), smokeFrequency.getDescription());
+        }
+
+        Map<String,String> drinkList = new HashMap<>();
+        for(DrinkingFrequency drinkingFrequency: DrinkingFrequency.values()){
+            drinkList.put(drinkingFrequency.name(), drinkingFrequency.getDescription());
+        }
+
+        Map<String,String> jobList = new HashMap<>();
+        for(Job job: Job.values()){
+            jobList.put(job.name(), job.getDescription());
+        }
+
+        return ClientFactorInfoDTO.builder().smokeList(smokeList).drinkList(drinkList).jobList(jobList).build();
     }
 
     @Override

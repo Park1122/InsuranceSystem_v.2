@@ -5,6 +5,7 @@ import system.insurance.backend.dbo.client.Job;
 import system.insurance.backend.dto.AuthorizationReportDTO;
 import system.insurance.backend.dto.DevelopingInsuranceDTO;
 import system.insurance.backend.dto.InsuranceDTO;
+import system.insurance.backend.dto.InsuranceInfoDTO;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,4 +29,6 @@ public interface InsuranceService {
     List<AuthorizationReportDTO> getAuthorizationReportList();
 
     Long calculatePremiumRate(String type, Long payIn, Job clientJob);
+
+    InsuranceInfoDTO getInsuranceInfoList();
 }

@@ -1,5 +1,7 @@
 package system.insurance.backend.service;
 
+import org.springframework.http.ResponseEntity;
+import system.insurance.backend.dto.ClientFactorInfoDTO;
 import system.insurance.backend.exception.NoClientException;
 import system.insurance.backend.dto.ClientDTO;
 
@@ -21,4 +23,6 @@ public interface ClientService {
     List<ClientDTO> findAllUnregisteredClint();
 
     ClientDTO findUnregisteredClientByID(int cid);
+
+    ClientFactorInfoDTO getClientFactorInfos();
 }

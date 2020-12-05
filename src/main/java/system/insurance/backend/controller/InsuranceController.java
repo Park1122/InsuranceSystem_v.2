@@ -29,11 +29,8 @@ public class InsuranceController {
     @GetMapping("/info")
     @ResponseBody
     public InsuranceInfoDTO getInsuranceInfoList() {
-        return InsuranceInfoDTO.builder()
-                .companyList(this.insuranceService.getInsuranceCompanyList())
-                .typeList(this.insuranceService.getInsuranceTypeList())
-                .productList(this.insuranceService.getProductList())
-                .build();
+        return this.insuranceService.getInsuranceInfoList();
+
     }
 
     @GetMapping("/product/developing")

@@ -7,13 +7,10 @@ import org.springframework.web.multipart.MultipartFile;
 import system.insurance.backend.FileUploadProperties;
 import system.insurance.backend.dbo.client.Job;
 import system.insurance.backend.dbo.employee.Employee;
+import system.insurance.backend.dto.*;
 import system.insurance.backend.exception.FileUploadException;
 import system.insurance.backend.exception.InvalidIdentifierException;
 import system.insurance.backend.dbo.insurance.*;
-import system.insurance.backend.dto.AuthorizationReportDTO;
-import system.insurance.backend.dto.DevelopingInsuranceDTO;
-import system.insurance.backend.dto.GuaranteeInfoWrapper;
-import system.insurance.backend.dto.InsuranceDTO;
 import system.insurance.backend.repository.*;
 
 import java.io.File;
@@ -255,6 +252,16 @@ public class InsuranceServiceImpl implements InsuranceService {
         }
         return calculatePay;
     }
+
+    @Override
+    public InsuranceInfoDTO getInsuranceInfoList() {
+        return InsuranceInfoDTO.builder()
+                .companyList(this.getInsuranceCompanyList())
+                .typeList(this.getInsuranceTypeList())
+                .productList(this.getProductList())
+                .build();
+    }
+
     private float firePremiumRate(Job clientJob) {
         float rate = 1.0f;
         switch (clientJob) {
