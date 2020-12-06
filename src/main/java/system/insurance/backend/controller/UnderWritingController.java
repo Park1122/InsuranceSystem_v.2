@@ -37,7 +37,6 @@ public class UnderWritingController {
     public void savePolicyInsurance(@RequestParam(name = "insuranceId") int insuranceId,@RequestParam(name = "physicalFactor") String physicalFactor,
                                     @RequestParam(name = "financialFactor") String financialFactor,
                                     @RequestParam(name = "environmentalFactor") String environmentalFactor){
-        System.out.println("저장저장"+insuranceId);
         this.underWritingService.savePolicyInsurance(insuranceId,physicalFactor,financialFactor,environmentalFactor);
     }
 
@@ -71,7 +70,7 @@ public class UnderWritingController {
     @GetMapping("/uw_policy")
     @ResponseBody
     public Optional<UWPolicyDTO> getUWPolicyDTO(@RequestParam(name = "pid") int pid) {
-        System.out.println("one"+pid);
+//        System.out.println("one"+pid);
         return this.underWritingService.getUnderWritingPolicy(pid);
 //        return null;
     }

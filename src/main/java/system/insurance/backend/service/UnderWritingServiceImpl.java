@@ -85,7 +85,7 @@ public class UnderWritingServiceImpl implements UnderWritingService {
                 UWPolicy uwPolicy = insurance.getUwPolicy();
                 uwPolicyDTOList.add(
                         UWPolicyDTO.builder()
-                                .id(uwPolicy.getId())
+                                .uwPolicyId(uwPolicy.getId())
                                 .name(insurance.getName())
                                 .date(uwPolicy.getDate())
                                 .build()
@@ -98,22 +98,29 @@ public class UnderWritingServiceImpl implements UnderWritingService {
     //하나의 보험의 policy를 찾는다.
     @Override
     public Optional<UWPolicyDTO> getUnderWritingPolicy(int pid) {
-//        Optional<UWPolicy> temp = this.underWritingPolicyRepository.findById(pid);
-//        if (temp.isPresent()) {
-//            UWPolicy uwPolicy = temp.get();
-//            UWPolicyDTO uwPolicyDTO = UWPolicyDTO.builder()
-//                    .uwPolicyId(uwPolicy.getId())
-//                    .name(uwPolicy.getInsurance().getName())
-//                    .date(uwPolicy.getDate())
-//                    .environmentalPolicy(uwPolicy.getEnvironmentalPolicy())
-//                    .physicalPolicy(uwPolicy.getPhysicalPolicy())
-//                    .financialPolicy(uwPolicy.getFinancialPolicy())
-//                    .build();
-////            System.out.println(uwPolicy.getInsurance().getId() + uwPolicy.getInsurance().getName() + uwPolicy.getPhysicalPolicy());
-//            return Optional.of(uwPolicyDTO);
-//        }
-//        System.out.println("없읍");
-        return Optional.empty();
+        UWPolicyDTO uwPolicyDTO=null;
+
+        Optional<UWPolicy> temp = this.underWritingPolicyRepository.findById(pid);
+        if (temp.isPresent()) {
+            UWPolicy uwPolicy = temp.get();
+            Optional<Insurance> tempp= this.insuranceRepository.findByUwPolicy(uwPolicy);
+            if(tempp.isPresent()) {
+                Insurance insurance = tempp.get();
+
+                uwPolicyDTO = UWPolicyDTO.builder()
+                        .uwPolicyId(uwPolicy.getId())
+                        .name(insurance.getName())
+                        .date(uwPolicy.getDate())
+                        .environmentalPolicy(uwPolicy.getEnvironmentalPolicy())
+                        .physicalPolicy(uwPolicy.getPhysicalPolicy())
+                        .financialPolicy(uwPolicy.getFinancialPolicy())
+                        .build();
+//            System.out.println(uwPolicy.getInsurance().getId() + uwPolicy.getInsurance().getName() + uwPolicy.getPhysicalPolicy());
+
+            }
+        }
+
+        return Optional.of(uwPolicyDTO);
     }
 
     @Override
