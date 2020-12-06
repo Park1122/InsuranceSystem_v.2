@@ -13,6 +13,9 @@ import java.util.Optional;
 public interface UnderWritingService {
 
     List<UWPolicyDTO> getUnderWritingPolicyList();
+
+    void saveContractStatus(int contractId, String status);
+
     List<ContractDTO> getContractList(int eid) throws NoEmployeeException;
     boolean saveFactorsToClient();
 
@@ -26,4 +29,6 @@ public interface UnderWritingService {
     void savePremiumRate(int cid);
 
     Long calculatePremiumRate(Insurance insurance, Job clientJob);
+
+    Map<Integer, ContractDetailDTO> findAllOnProgressContractList(int cid);
 }

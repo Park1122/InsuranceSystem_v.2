@@ -2,6 +2,7 @@ package system.insurance.backend.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import system.insurance.backend.dto.ContractDetailDTO;
 import system.insurance.backend.exception.NoClientException;
 import system.insurance.backend.exception.NoEmployeeException;
 import system.insurance.backend.dto.ClientDTO;
@@ -55,6 +56,12 @@ public class ClientController {
     @GetMapping("/registering/list")
     public Map<Integer, ClientDTO> findAllRegisteringClientList(){
         return this.clientService.findAllRegisteringClient();
+    }
+
+    @GetMapping("/onProgress/list")
+    public Map<Integer, ContractDetailDTO> findAllOnProgressContractList(@RequestParam(name = "eid") int id){
+        System.out.println(id+"dddddd");
+        return this.underWritingService.findAllOnProgressContractList(id);
     }
 
     @GetMapping("/registering/detail")

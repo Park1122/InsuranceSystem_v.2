@@ -40,6 +40,15 @@ public class UnderWritingServiceImpl implements UnderWritingService {
         this.contractRepository = contractRepository;
         this.clientRepository=clientRepository;
     }
+    @Override
+    public void saveContractStatus(int contractId, String status){
+        Optional<Contract> temp = this.contractRepository.findById(contractId);
+        if(temp.isPresent()){
+            Contract contract = temp.get();
+            contract.setUnderwritingPassed(UnderWritingStatus.valueOf(status));
+            this.contractRepository.save(contract);
+        }
+    }
 
     @Override
     public List<ContractDTO> getContractList(int eid) throws NoEmployeeException {
@@ -266,6 +275,49 @@ public class UnderWritingServiceImpl implements UnderWritingService {
             calculatePay = (long) Math.round(payIn*this.deathPremiumRate(clientJob));
         }
         return calculatePay;
+    }
+
+    @Override
+    public Map<Integer, ContractDetailDTO> findAllOnProgressContractList(int cid) {
+
+        Map<Integer,ContractDetailDTO> contractDetailDTOMap = new HashMap<>();
+
+        Optional<Employee> temp = this.employeeRepository.findById(cid);
+        if(temp.isPresent()){
+            Employee employee = temp.get();
+            List<Contract> contracts= this.contractRepository.findAllBySalesPersonAndUnderwritingPassed(employee,UnderWritingStatus.ONPROGRESS);
+
+            for(Contract contract: contracts){
+                if(contract.getClient() instanceof RegisteredClient){
+                    RegisteredClient client = (RegisteredClient) contract.getClient();
+
+                    if(contract.getInsurance().getUwPolicy()!=null&& client.getEnvironmentalFactor()!=null&&client.getPhysicalFactor()!=null&&client.getFinancialFactor()!=null)
+                contractDetailDTOMap.put(
+                        contract.getId(),
+                        ContractDetailDTO.builder()
+                                .insuranceName(contract.getInsurance().getName())
+                                .insuranceType(contract.getInsurance().getType().getDescription())
+                                .physicalPolicy(contract.getInsurance().getUwPolicy().getPhysicalPolicy())
+                                .environmentalPolicy(contract.getInsurance().getUwPolicy().getEnvironmentalPolicy())
+                                .financialPolicy(contract.getInsurance().getUwPolicy().getFinancialPolicy())
+
+                                .physicalSmokeFrequency(client.getPhysicalFactor().getSmokeFrequency().getDescription())
+                                .physicalDrinkingFrequency(client.getPhysicalFactor().getDrinkingFrequency().getDescription())
+
+                                .environmentalDangerousArea(client.getEnvironmentalFactor().getDangerousArea())
+                                .environmentalDangerousHobby(client.getEnvironmentalFactor().getDangerousHobby())
+                                .environmentalJob(client.getEnvironmentalFactor().getJob().getDescription())
+
+                                .financialCreditRating(client.getFinancialFactor().getCreditRating())
+                                .financialIncome(client.getFinancialFactor().getIncome())
+                                .financialProperty(client.getFinancialFactor().getProperty())
+
+                                .calculatedPayment(contract.getPayment())
+                                .build()
+                );}
+            }
+        }
+        return contractDetailDTOMap;
     }
 
 

@@ -16,8 +16,8 @@ import java.util.Optional;
 @RequestMapping("/uw")
 public class UnderWritingController {
 
-    private UnderWritingService underWritingService;
-    private ClientService clientService;
+    private final UnderWritingService underWritingService;
+    private final ClientService clientService;
 
     @Autowired
     public UnderWritingController(UnderWritingService underWritingService,ClientService clientService) {
@@ -25,7 +25,12 @@ public class UnderWritingController {
     this.clientService=clientService;
     }
 
-    @GetMapping("factor/info")
+    @PostMapping("/contractStatus/save")
+    public void saveContractStatus(@RequestParam(name = "contractId") int contractId,@RequestParam(name = "status") String status){
+        this.underWritingService.saveContractStatus(contractId, status);
+    }
+
+    @GetMapping("/factor/info")
     @ResponseBody
     public ResponseEntity<ClientFactorInfoDTO> getClientFactorInfos(@RequestParam(name = "eid") int eid){
         return ResponseEntity.ok(this.clientService.getClientFactorInfos(eid));
