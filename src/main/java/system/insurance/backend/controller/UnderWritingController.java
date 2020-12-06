@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import system.insurance.backend.dto.*;
 import system.insurance.backend.exception.NoEmployeeException;
 import system.insurance.backend.service.ClientService;
+import system.insurance.backend.service.InsuranceService;
 import system.insurance.backend.service.UnderWritingService;
 
 import java.util.List;
@@ -18,11 +19,26 @@ public class UnderWritingController {
 
     private final UnderWritingService underWritingService;
     private final ClientService clientService;
+    private final InsuranceService insuranceService;
 
     @Autowired
-    public UnderWritingController(UnderWritingService underWritingService,ClientService clientService) {
+    public UnderWritingController(UnderWritingService underWritingService,ClientService clientService,InsuranceService insuranceService) {
         this.underWritingService = underWritingService;
     this.clientService=clientService;
+    this.insuranceService=insuranceService;
+    }
+
+    @GetMapping("/noPolicyInsurance/list")
+    public Map<String, String> getNoPolicyInsuranceList(){
+        return this.insuranceService.getNoPolicyInsuranceList();
+
+    }
+    @PostMapping("/noPolicyInsurance/save")
+    public void savePolicyInsurance(@RequestParam(name = "insuranceId") int insuranceId,@RequestParam(name = "physicalFactor") String physicalFactor,
+                                    @RequestParam(name = "financialFactor") String financialFactor,
+                                    @RequestParam(name = "environmentalFactor") String environmentalFactor){
+        System.out.println("저장저장"+insuranceId);
+        this.underWritingService.savePolicyInsurance(insuranceId,physicalFactor,financialFactor,environmentalFactor);
     }
 
     @PostMapping("/contractStatus/save")
@@ -48,7 +64,6 @@ public class UnderWritingController {
     @GetMapping("/uw_policy/list")
     @ResponseBody
     public List<UWPolicyDTO> getUWPolicyDTOList() {
-//        System.out.println("list");
         return this.underWritingService.getUnderWritingPolicyList();
     }
 
@@ -56,7 +71,7 @@ public class UnderWritingController {
     @GetMapping("/uw_policy")
     @ResponseBody
     public Optional<UWPolicyDTO> getUWPolicyDTO(@RequestParam(name = "pid") int pid) {
-//        System.out.println("one"+pid);
+        System.out.println("one"+pid);
         return this.underWritingService.getUnderWritingPolicy(pid);
 //        return null;
     }

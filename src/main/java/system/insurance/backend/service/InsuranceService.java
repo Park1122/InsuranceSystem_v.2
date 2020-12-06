@@ -1,7 +1,6 @@
 package system.insurance.backend.service;
 
 import org.springframework.web.multipart.MultipartFile;
-import system.insurance.backend.dbo.client.Job;
 import system.insurance.backend.dto.AuthorizationReportDTO;
 import system.insurance.backend.dto.DevelopingInsuranceDTO;
 import system.insurance.backend.dto.InsuranceDTO;
@@ -31,6 +30,9 @@ public interface InsuranceService {
 //    Long calculatePremiumRate(String type, Long payIn, Job clientJob);
 
     InsuranceInfoDTO getInsuranceInfoList();
+
+    Map<String, String> getNoPolicyInsuranceList();
+
 
 //    void savePremiumRate(int cid);
 }

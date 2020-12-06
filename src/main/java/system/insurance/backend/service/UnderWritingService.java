@@ -31,4 +31,7 @@ public interface UnderWritingService {
     Long calculatePremiumRate(Insurance insurance, Job clientJob);
 
     Map<Integer, ContractDetailDTO> findAllOnProgressContractList(int cid);
+
+
+    void savePolicyInsurance(int insuranceId, String physicalFactor, String financialFactor, String environmentalFactor);
 }

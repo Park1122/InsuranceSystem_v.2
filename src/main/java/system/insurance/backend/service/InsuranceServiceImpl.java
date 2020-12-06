@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import system.insurance.backend.FileUploadProperties;
-import system.insurance.backend.dbo.client.Job;
 import system.insurance.backend.dbo.employee.Employee;
 import system.insurance.backend.dto.*;
 import system.insurance.backend.exception.FileUploadException;
@@ -19,7 +18,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -246,5 +244,21 @@ public class InsuranceServiceImpl implements InsuranceService {
                 .productList(this.getProductList())
                 .build();
     }
+
+    @Override
+    public Map<String, String> getNoPolicyInsuranceList() {
+        Map<String, String> dtoHashMap = new HashMap<>();
+
+
+        List<Insurance> insurances = this.insuranceRepository.findAllByStatus(InsuranceStatus.ON_SALE);
+        insurances.forEach((insurance)->{
+            if(insurance.getUwPolicy()==null)
+            dtoHashMap.put(insurance.getId()+"", insurance.getType().getDescription()+" | "+insurance.getCompany().getCompanyName()+" | "+insurance.getName());
+        });
+//        System.out.print("ㅇㅅㅇㅅㅇㅅ"+dtoHashMap.size());
+        return dtoHashMap;
+    }
+
+
 
 }

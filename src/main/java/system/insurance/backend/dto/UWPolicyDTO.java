@@ -12,7 +12,7 @@ import java.util.Date;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UWPolicyDTO {
 
-    private final int uwPolicyId;
+    private final int id;
     private final String name;
     private final LocalDate date;
     private final String physicalPolicy;
@@ -21,8 +21,8 @@ public class UWPolicyDTO {
 
 
     @Builder
-    public UWPolicyDTO(int uwPolicyId, String name, LocalDate date, String physicalPolicy, String environmentalPolicy,String financialPolicy) {
-        this.uwPolicyId = uwPolicyId;
+    public UWPolicyDTO(int id, String name, LocalDate date, String physicalPolicy, String environmentalPolicy,String financialPolicy) {
+        this.id = id;
         this.name=name;
         this.date=date;
         this.physicalPolicy=physicalPolicy;
