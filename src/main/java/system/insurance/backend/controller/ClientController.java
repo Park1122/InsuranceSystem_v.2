@@ -5,9 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import system.insurance.backend.exception.NoClientException;
 import system.insurance.backend.exception.NoEmployeeException;
 import system.insurance.backend.dto.ClientDTO;
-import system.insurance.backend.service.ClientService;
-import system.insurance.backend.service.MailService;
-import system.insurance.backend.service.SalesService;
+import system.insurance.backend.service.*;
 
 import javax.mail.MessagingException;
 import java.util.List;
@@ -20,11 +18,13 @@ public class ClientController {
     private final ClientService clientService;
     private final SalesService salesService;
     private final MailService mailService;
+    private final UnderWritingService underWritingService;
 
-    public ClientController(ClientService clientService, SalesService salesService, MailService mailService) {
+    public ClientController(ClientService clientService, SalesService salesService, MailService mailService,UnderWritingService underWritingService) {
         this.clientService = clientService;
         this.salesService = salesService;
         this.mailService = mailService;
+        this.underWritingService=underWritingService;
     }
 
     @PostMapping("/save/Factors")
@@ -32,8 +32,11 @@ public class ClientController {
                                   @RequestParam(name="environmentalDangerousArea") String environmentalDangerousArea,@RequestParam(name="environmentalDangerousHobby") String environmentalDangerousHobby,@RequestParam(name="environmentalJob") String environmentalJob,
                                   @RequestParam(name="financialIncome") long financialIncome,@RequestParam(name="financialCreditRating") int financialCreditRating,@RequestParam(name="financialProperty") long financialProperty){
         try {
-            System.out.println("post come");
+//            System.out.println("post come");
             this.clientService.saveClientFactors(cid, physicalSmokeFrequency, physicalDrinkingFrequency, environmentalDangerousArea, environmentalDangerousHobby, environmentalJob, financialIncome, financialCreditRating, financialProperty);
+            this.underWritingService.savePremiumRate(cid);
+
+
         } catch (NoClientException e) {
             e.printStackTrace();
         }

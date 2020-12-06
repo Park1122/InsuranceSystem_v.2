@@ -77,11 +77,10 @@ public class UnderWritingController {
         }
     }
 
-    //고객의 팩터들 불러오는 용도(3)
+    //고객의 작성완료되어있는 팩터들 불러오기/
     @GetMapping("/factor_manage/client")
     @ResponseBody
     public ResponseEntity<ContractDetailDTO> getClientDTO(@RequestParam(name="contractId") int contractId) {
-//        System.out.println("ㅇㅇㅇ");
         return this.underWritingService.getContractDetailFactors(contractId);
     }
 

@@ -3,21 +3,18 @@ package system.insurance.backend.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import system.insurance.backend.dbo.client.Client;
+import system.insurance.backend.dbo.client.Job;
 import system.insurance.backend.dbo.client.RegisteredClient;
 import system.insurance.backend.dbo.contract.Contract;
 import system.insurance.backend.dbo.contract.UnderWritingStatus;
 import system.insurance.backend.dbo.employee.Employee;
 import system.insurance.backend.dbo.insurance.InsuranceStatus;
-import system.insurance.backend.dto.ClientFactorDTO;
+import system.insurance.backend.dbo.insurance.InsuranceType;
+import system.insurance.backend.dto.*;
 import system.insurance.backend.exception.NoEmployeeException;
 import system.insurance.backend.dbo.insurance.Insurance;
-import system.insurance.backend.dto.ContractDTO;
-import system.insurance.backend.dto.ContractDetailDTO;
-import system.insurance.backend.dto.UWPolicyDTO;
-import system.insurance.backend.repository.ContractRepository;
-import system.insurance.backend.repository.EmployeeRepository;
-import system.insurance.backend.repository.InsuranceRepository;
-import system.insurance.backend.repository.UnderWritingPolicyRepository;
+import system.insurance.backend.repository.*;
 import system.insurance.backend.dbo.underWriting.UWPolicy;
 
 import java.util.*;
@@ -31,14 +28,17 @@ public class UnderWritingServiceImpl implements UnderWritingService {
     private EmployeeRepository employeeRepository;
     private ContractRepository contractRepository;
 
+    private ClientRepository clientRepository;
+
 
     @Autowired
     public UnderWritingServiceImpl(InsuranceRepository insuranceRepository, UnderWritingPolicyRepository underWritingPolicyRepository,
-                                   EmployeeRepository employeeRepository, ContractRepository contractRepository) {
+                                   EmployeeRepository employeeRepository, ContractRepository contractRepository,ClientRepository clientRepository) {
         this.insuranceRepository = insuranceRepository;
         this.underWritingPolicyRepository = underWritingPolicyRepository;
         this.employeeRepository = employeeRepository;
         this.contractRepository = contractRepository;
+        this.clientRepository=clientRepository;
     }
 
     @Override
@@ -188,15 +188,24 @@ public class UnderWritingServiceImpl implements UnderWritingService {
             Employee employee = opt.get();
             List<Contract> contracts = this.contractRepository.findAllBySalesPersonAndUnderwritingPassed(employee, UnderWritingStatus.ONPROGRESS);
             contracts.forEach((contract) -> {
-                contractList.add(
-                        ContractDTO.builder()
-                                .id(contract.getId())
-                                .clientName(contract.getClient().getName())
-                                .insuranceType(contract.getInsurance().getType())
-                                .compensationProvision(contract.isCompensationProvision())
-                                .count(this.contractRepository.findAllByClientAndSalesPersonAndUnderwritingPassed(contract.getClient(), employee, contract.getUnderwritingPassed()).toArray().length)
-                                .underWritingPassed(contract.getUnderwritingPassed())
-                                .build());
+
+                if (contract.getClient() instanceof RegisteredClient) {
+                    RegisteredClient client = (RegisteredClient) contract.getClient();
+                    if (!(client.getEnvironmentalFactor() == null ||
+                            client.getFinancialFactor() == null ||
+                            client.getPhysicalFactor() == null)) {
+                        contractList.add(
+                                ContractDTO.builder()
+                                        .id(contract.getId())
+                                        .clientName(contract.getClient().getName())
+                                        .insuranceType(contract.getInsurance().getType())
+                                        .compensationProvision(contract.isCompensationProvision())
+                                        .count(this.contractRepository.findAllByClientAndSalesPersonAndUnderwritingPassed(contract.getClient(), employee, contract.getUnderwritingPassed()).toArray().length)
+                                        .underWritingPassed(contract.getUnderwritingPassed())
+                                        .build());
+                    }
+                }
+
             });
         } else {
             throw new NoEmployeeException();
@@ -210,8 +219,7 @@ public class UnderWritingServiceImpl implements UnderWritingService {
 
         if (opt.isPresent()) {
             Contract contract = opt.get();
-            ContractDetailDTO dto = ContractDetailDTO
-                    .builder()
+            ContractDetailDTO dto = ContractDetailDTO.builder()
                     .insuranceName(contract.getInsurance().getName())
                     .insuranceType(contract.getInsurance().getType().name())
                     .environmentalDangerousArea(((RegisteredClient) contract.getClient()).getEnvironmentalFactor().getDangerousArea())
@@ -226,6 +234,111 @@ public class UnderWritingServiceImpl implements UnderWritingService {
             return ResponseEntity.ok(dto);
         }
         return null;
+    }
+
+    @Override
+    public void savePremiumRate(int cid) {
+        Optional<Client> temp = this.clientRepository.findById(cid);
+        if(temp.isPresent()&&temp.get() instanceof RegisteredClient){
+            RegisteredClient client= (RegisteredClient) temp.get();
+            List<Contract> contractList = this.contractRepository.findAllByClient(client);
+            for(Contract contract: contractList){
+                Long premiumRate = this.calculatePremiumRate(contract.getInsurance(),client.getEnvironmentalFactor().getJob());
+                contract.setPayment(premiumRate);
+                this.contractRepository.save(contract);
+;            }
+
+
+        }
+    }
+
+    @Override
+    public Long calculatePremiumRate(Insurance insurance, Job clientJob) {
+        InsuranceType insuranceType = insurance.getType();
+        Long payIn = insurance.getBasicPremium();
+
+        Long calculatePay = 0L;
+        if (insuranceType.equals(InsuranceType.FIRE)) {
+            calculatePay = (long) Math.round(payIn * this.firePremiumRate(clientJob));
+        } else if (insuranceType.equals(InsuranceType.INJURY)) {
+            calculatePay = (long) Math.round(payIn*this.injuryPremiumRate(clientJob));
+        } else if (insuranceType.equals(InsuranceType.DEATH)) {
+            calculatePay = (long) Math.round(payIn*this.deathPremiumRate(clientJob));
+        }
+        return calculatePay;
+    }
+
+
+    private float firePremiumRate(Job clientJob) {
+        float rate = 1.0f;
+        switch (clientJob) {
+            case DRIVER:
+            case OFFICE_WORKER:
+                rate *= 1.2;
+                break;
+            case HOUSEWIFE:
+                rate *= 1.1;
+                break;
+            case STUDENT:
+            case SOLDIER:
+            case NONE:
+                rate *= 1.0;
+                break;
+            case SELF_EMPLOYMENT:
+                rate *= 1.4;
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + clientJob);
+        }
+        return rate;
+    }
+    private float injuryPremiumRate(Job clientJob) {
+        float rate = 1.0f;
+        switch (clientJob) {
+            case DRIVER:
+            case SELF_EMPLOYMENT:
+                rate *= 1.2;
+                break;
+            case HOUSEWIFE:
+            case OFFICE_WORKER:
+                rate *= 1.1;
+                break;
+            case STUDENT:
+            case NONE:
+                rate *= 1.0;
+                break;
+            case SOLDIER:
+                rate *= 1.3;
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + clientJob);
+        }
+        return rate;
+    }
+    private float deathPremiumRate(Job clientJob) {
+        float rate = 1.0f;
+        switch (clientJob) {
+            case DRIVER:
+                rate *= 1.3;
+                break;
+            case HOUSEWIFE:
+                rate *= 1.1;
+                break;
+            case STUDENT:
+            case NONE:
+                rate *= 1.0;
+                break;
+            case SOLDIER:
+                rate *= 1.4;
+                break;
+            case OFFICE_WORKER:
+            case SELF_EMPLOYMENT:
+                rate *= 1.2;
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + clientJob);
+        }
+        return rate;
     }
 
 

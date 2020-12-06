@@ -238,21 +238,6 @@ public class InsuranceServiceImpl implements InsuranceService {
         }
         return true;
     }
-
-    @Override
-    public Long calculatePremiumRate(String type, Long payIn, Job clientJob) {
-        InsuranceType insuranceType = InsuranceType.valueOf(type);
-        Long calculatePay = 0L;
-        if (insuranceType.equals(InsuranceType.FIRE)) {
-            calculatePay = (long) Math.round(payIn * this.firePremiumRate(clientJob));
-        } else if (insuranceType.equals(InsuranceType.INJURY)) {
-            calculatePay = (long) Math.round(payIn*this.injuryPremiumRate(clientJob));
-        } else if (insuranceType.equals(InsuranceType.DEATH)) {
-            calculatePay = (long) Math.round(payIn*this.deathPremiumRate(clientJob));
-        }
-        return calculatePay;
-    }
-
     @Override
     public InsuranceInfoDTO getInsuranceInfoList() {
         return InsuranceInfoDTO.builder()
@@ -260,78 +245,6 @@ public class InsuranceServiceImpl implements InsuranceService {
                 .typeList(this.getInsuranceTypeList())
                 .productList(this.getProductList())
                 .build();
-    }
-
-    private float firePremiumRate(Job clientJob) {
-        float rate = 1.0f;
-        switch (clientJob) {
-            case DRIVER:
-            case OFFICE_WORKER:
-                rate *= 1.2;
-                break;
-            case HOUSEWIFE:
-                rate *= 1.1;
-                break;
-            case STUDENT:
-            case SOLDIER:
-            case NONE:
-                rate *= 1.0;
-                break;
-            case SELF_EMPLOYMENT:
-                rate *= 1.4;
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + clientJob);
-        }
-        return rate;
-    }
-    private float injuryPremiumRate(Job clientJob) {
-        float rate = 1.0f;
-        switch (clientJob) {
-            case DRIVER:
-            case SELF_EMPLOYMENT:
-                rate *= 1.2;
-                break;
-            case HOUSEWIFE:
-            case OFFICE_WORKER:
-                rate *= 1.1;
-                break;
-            case STUDENT:
-            case NONE:
-                rate *= 1.0;
-                break;
-            case SOLDIER:
-                rate *= 1.3;
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + clientJob);
-        }
-        return rate;
-    }
-    private float deathPremiumRate(Job clientJob) {
-        float rate = 1.0f;
-        switch (clientJob) {
-            case DRIVER:
-                rate *= 1.3;
-                break;
-            case HOUSEWIFE:
-                rate *= 1.1;
-                break;
-            case STUDENT:
-            case NONE:
-                rate *= 1.0;
-                break;
-            case SOLDIER:
-                rate *= 1.4;
-                break;
-            case OFFICE_WORKER:
-            case SELF_EMPLOYMENT:
-                rate *= 1.2;
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + clientJob);
-        }
-        return rate;
     }
 
 }

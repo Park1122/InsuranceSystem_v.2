@@ -1,11 +1,10 @@
 package system.insurance.backend.service;
 
 import org.springframework.http.ResponseEntity;
-import system.insurance.backend.dto.ClientFactorDTO;
+import system.insurance.backend.dbo.client.Job;
+import system.insurance.backend.dbo.insurance.Insurance;
+import system.insurance.backend.dto.*;
 import system.insurance.backend.exception.NoEmployeeException;
-import system.insurance.backend.dto.ContractDTO;
-import system.insurance.backend.dto.ContractDetailDTO;
-import system.insurance.backend.dto.UWPolicyDTO;
 
 import java.util.List;
 import java.util.Map;
@@ -20,7 +19,11 @@ public interface UnderWritingService {
     List<ContractDTO> getUnPassedContractList(int id) throws NoEmployeeException;
 
     ResponseEntity<ContractDetailDTO> getContractDetailFactors(int contractId);
-    public Optional<UWPolicyDTO> getUnderWritingPolicy(int pid);
+    Optional<UWPolicyDTO> getUnderWritingPolicy(int pid);
 
     Map<Integer, ClientFactorDTO> getOnProgressContractAndLessFactorCustomers(int id);
+
+    void savePremiumRate(int cid);
+
+    Long calculatePremiumRate(Insurance insurance, Job clientJob);
 }

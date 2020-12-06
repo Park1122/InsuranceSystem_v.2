@@ -29,12 +29,14 @@ public class Insurance {
     private Employee author;
     private LocalDate date;
 
+    private Long basicPremium;
+
     @OneToOne
     @JoinColumn(name="uw_policy_id", referencedColumnName="id")
     private UWPolicy uwPolicy;
 
     @Builder
-    public Insurance(InsuranceType type, InsuranceStatus status, InsuranceCompany company, String name, Employee author, LocalDate date,UWPolicy uwPolicy) {
+    public Insurance(InsuranceType type, InsuranceStatus status, InsuranceCompany company, String name, Employee author, LocalDate date,UWPolicy uwPolicy,Long basicPremium) {
         this.type = type;
         this.status = status;
         this.company = company;
@@ -42,5 +44,6 @@ public class Insurance {
         this.author = author;
         this.date = date;
         this.uwPolicy=uwPolicy;
+        this.basicPremium=basicPremium;
     }
 }

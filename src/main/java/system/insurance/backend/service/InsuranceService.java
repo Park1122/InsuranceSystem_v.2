@@ -28,7 +28,9 @@ public interface InsuranceService {
 
     List<AuthorizationReportDTO> getAuthorizationReportList();
 
-    Long calculatePremiumRate(String type, Long payIn, Job clientJob);
+//    Long calculatePremiumRate(String type, Long payIn, Job clientJob);
 
     InsuranceInfoDTO getInsuranceInfoList();
+
+//    void savePremiumRate(int cid);
 }

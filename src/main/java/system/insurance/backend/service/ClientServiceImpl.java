@@ -102,9 +102,7 @@ public class ClientServiceImpl implements ClientService {
                                     client.getPhysicalFactor() == null) {
                                clientList.add(client);
                             }
-
                         }
-
                     }
             );
         }
