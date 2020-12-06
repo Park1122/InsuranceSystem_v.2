@@ -60,7 +60,7 @@ public class ClientController {
 
     @GetMapping("/onProgress/list")
     public Map<Integer, ContractDetailDTO> findAllOnProgressContractList(@RequestParam(name = "eid") int id){
-        System.out.println(id+"dddddd");
+//        System.out.println(id+"dddddd");
         return this.underWritingService.findAllOnProgressContractList(id);
     }
 
