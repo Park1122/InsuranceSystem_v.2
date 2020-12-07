@@ -17,6 +17,7 @@ public class InvestigationController {
         this.investigationService = investigationService;
     }
 
+    //조사
     @GetMapping("/market/list")
     public Map<Integer, MarketInvestigationDTO> getMarketInvestigationList() {
         return this.investigationService.getAllMarketInvestigationList();

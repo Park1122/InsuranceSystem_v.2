@@ -20,6 +20,7 @@ public class FormDownloadController {
         this.formDownloadService = formDownloadService;
     }
 
+    //파일 다운로드.
     @GetMapping("/download")
     public FileSystemResource downloadForm(@RequestParam(name = "fileName")String fileName, HttpServletResponse res){
         res.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment");

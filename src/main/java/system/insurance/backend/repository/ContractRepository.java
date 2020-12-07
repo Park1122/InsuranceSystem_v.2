@@ -13,18 +13,10 @@ import java.util.Optional;
 
 public interface ContractRepository extends JpaRepository<Contract, Integer> {
     List<Contract> findAllBySalesPerson(Employee employee);
-
     Optional<Contract> findByClient(Client client);
-
     List<Contract> findAllByClientAndSalesPerson(Client client, Employee salesPerson);
-
     List<Contract> findAllByInsurance(Insurance insurance);
-
     Collection<Object> findAllByClientAndSalesPersonAndUnderwritingPassed(Client client, Employee employee, UnderWritingStatus underwritingPassed);
-
     List<Contract> findAllByClient(Client client);
-
     List<Contract> findAllBySalesPersonAndUnderwritingPassed(Employee employee, UnderWritingStatus onprogress);
-
-//    List<Contract> findAll();
 }

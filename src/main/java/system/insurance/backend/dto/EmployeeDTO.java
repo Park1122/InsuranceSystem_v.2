@@ -7,12 +7,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EmployeeDTO {
-    private int id;
-    private String name;
-    private String auth;
+    private final int id;
+    private final String name;
+    private final String auth;
 
     @Builder
     public EmployeeDTO(int id, String name, String auth) {

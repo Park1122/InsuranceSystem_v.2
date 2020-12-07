@@ -27,18 +27,20 @@ public class ClientController {
         this.underWritingService=underWritingService;
     }
 
+    //가망고객을 DB에 등록.
     @PostMapping("/save/unRegistered")
     public boolean saveNewUnRegisteredClient(@RequestParam(name="customerName")String customerName, @RequestParam(name="contact")String contact,
                                              @RequestParam(name="age")int age,@RequestParam(name="email")String email,@RequestParam(name="sex")String sex){
-        System.out.println(customerName+contact+email+" "+sex);
         return this.clientService.saveNewUnRegisteredClient(customerName,contact, age,email,sex );
     }
 
+    //폼을 위한 성별 목록.
     @GetMapping("/sex/list")
     public Map<String,String> getSexList(){
         return clientService.getSexList();
     }
 
+    //고객 요인 저장하기.
     @PostMapping("/save/Factors")
     public void saveClientFactors(@RequestParam(name="cid") int cid,@RequestParam(name="physicalSmokeFrequency") String physicalSmokeFrequency,@RequestParam(name="physicalDrinkingFrequency") String physicalDrinkingFrequency,
                                   @RequestParam(name="environmentalDangerousArea") String environmentalDangerousArea,@RequestParam(name="environmentalDangerousHobby") String environmentalDangerousHobby,@RequestParam(name="environmentalJob") String environmentalJob,
@@ -46,34 +48,39 @@ public class ClientController {
         try {
             this.clientService.saveClientFactors(cid, physicalSmokeFrequency, physicalDrinkingFrequency, environmentalDangerousArea, environmentalDangerousHobby, environmentalJob, financialIncome, financialCreditRating, financialProperty);
             this.underWritingService.savePremiumRate(cid);
-
-
         } catch (NoClientException e) {
             e.printStackTrace();
         }
     }
 
+    //미등록고객 중 한명.
     @GetMapping("/unregistered/search")
-    public ResponseEntity<ClientDTO> findAllUnregisteredClientList(@RequestParam(name = "id")int cid){
+    public ResponseEntity<ClientDTO> findUnregisteredClientbyId(@RequestParam(name = "id")int cid){
         return ResponseEntity.ok(this.clientService.findUnregisteredClientByID(cid));
     }
 
+    //미등록고객 목록.
     @GetMapping("/unregistered/list")
-    public List<ClientDTO> findAllUnregisteredClientList(){
+    public List<ClientDTO> findUnregisteredClientList(){
         return this.clientService.findAllUnregisteredClint();
     }
 
+    //등록중인 고객 목록
     @GetMapping("/registering/list")
     public Map<Integer, ClientDTO> findAllRegisteringClientList(){
         return this.clientService.findAllRegisteringClient();
     }
 
+    //옮길까?
+    //////////////////////////////
+    //////////////////////////////
+    //아직 승인 안한 계약목록
     @GetMapping("/onProgress/list")
     public Map<Integer, ContractDetailDTO> findAllOnProgressContractList(@RequestParam(name = "eid") int id){
-//        System.out.println(id+"dddddd");
         return this.underWritingService.findAllOnProgressContractList(id);
     }
 
+    //등록죽인 고객 한명.
     @GetMapping("/registering/detail")
     public ResponseEntity<ClientDTO> getRegisteringClientDetail(@RequestParam(name = "id") int id) {
         try {
@@ -84,27 +91,36 @@ public class ClientController {
         }
     }
 
+    //등록된 고객을 이름으로 찾기.
     @GetMapping("/registered/search{name}")
     public ResponseEntity<ClientDTO> searchRegisteredByName(@PathVariable String name){
         return ResponseEntity.ok(this.clientService.searchRegisteredByName(name));
     }
 
+    //등록된 고객을 계약으로 찾기.
     @GetMapping("/registered/search{contact}")
     public ResponseEntity<ClientDTO> searchRegisteredByContact(@PathVariable String contact){
         return ResponseEntity.ok(this.clientService.searchRegisteredByContact(contact));
     }
 
+    //등록된 고객을 주민번호로 찾기.
     @GetMapping("/registered/search{rrn}")
     public ResponseEntity<ClientDTO> searchRegisteredByRRN(@PathVariable String rrn){
         return ResponseEntity.ok(this.clientService.searchRegisteredByRRN(rrn));
     }
 
+    //등록된 고객을 이름과 아이디로 찾기
     @GetMapping("/search/nameAndId")
     public ResponseEntity<ClientDTO> searchClient(@RequestParam(name = "name") String name,@RequestParam(name = "id") int id){
         System.out.println("id:"+id+" name:"+name+" 하하하");
         return ResponseEntity.ok(this.clientService.searchClientByIdAndName(id,name));
     }
 
+    ////////////////옮길까??
+    ///////////////////////////////
+    ///////////////////////////////
+    //////////////////////////////
+    //고객 상담 저장.
     @PostMapping("/new/register")
     public boolean newClient(@RequestParam(name = "content") String content, @RequestParam(name = "eid")int eid, @RequestParam(name = "email")String email) {
         try {

@@ -23,13 +23,13 @@ import java.util.*;
 @Service
 public class UnderWritingServiceImpl implements UnderWritingService {
 
-    private InsuranceRepository insuranceRepository;
-    private UnderWritingPolicyRepository underWritingPolicyRepository;
+    private final InsuranceRepository insuranceRepository;
+    private final UnderWritingPolicyRepository underWritingPolicyRepository;
 
-    private EmployeeRepository employeeRepository;
-    private ContractRepository contractRepository;
+    private final EmployeeRepository employeeRepository;
+    private final ContractRepository contractRepository;
 
-    private ClientRepository clientRepository;
+    private final ClientRepository clientRepository;
 
 
     @Autowired
@@ -57,7 +57,6 @@ public class UnderWritingServiceImpl implements UnderWritingService {
         Employee employee = this.employeeRepository.findById(eid).orElseThrow(NoEmployeeException::new);
         List<Contract> contractList = this.contractRepository.findAllBySalesPerson(employee);
         List<ContractDTO> contractDTOList = new ArrayList<>();
-
         contractList.forEach((contract) -> {
             contractDTOList.add(
                     ContractDTO.builder()
@@ -75,11 +74,8 @@ public class UnderWritingServiceImpl implements UnderWritingService {
     //인수 지침 등록화면: 인수 지침 목록을 보여준다. 여기서도 개발중인 보험은 뺀다.
     @Override
     public List<UWPolicyDTO> getUnderWritingPolicyList() {
-
         List<Insurance> insuranceList = this.insuranceRepository.findAllByStatus(InsuranceStatus.ON_SALE);
-
         List<UWPolicyDTO> uwPolicyDTOList = new ArrayList<>();
-
         insuranceList.forEach((insurance) -> {
             if (insurance.getUwPolicy() != null) {
                 UWPolicy uwPolicy = insurance.getUwPolicy();
@@ -99,14 +95,12 @@ public class UnderWritingServiceImpl implements UnderWritingService {
     @Override
     public Optional<UWPolicyDTO> getUnderWritingPolicy(int pid) {
         UWPolicyDTO uwPolicyDTO=null;
-
         Optional<UWPolicy> temp = this.underWritingPolicyRepository.findById(pid);
         if (temp.isPresent()) {
             UWPolicy uwPolicy = temp.get();
             Optional<Insurance> tempp= this.insuranceRepository.findByUwPolicy(uwPolicy);
             if(tempp.isPresent()) {
                 Insurance insurance = tempp.get();
-
                 uwPolicyDTO = UWPolicyDTO.builder()
                         .uwPolicyId(uwPolicy.getId())
                         .name(insurance.getName())
@@ -115,18 +109,14 @@ public class UnderWritingServiceImpl implements UnderWritingService {
                         .physicalPolicy(uwPolicy.getPhysicalPolicy())
                         .financialPolicy(uwPolicy.getFinancialPolicy())
                         .build();
-//            System.out.println(uwPolicy.getInsurance().getId() + uwPolicy.getInsurance().getName() + uwPolicy.getPhysicalPolicy());
-
             }
         }
-
         return Optional.of(uwPolicyDTO);
     }
 
     @Override
     public Map<Integer, ClientFactorDTO> getOnProgressContractAndLessFactorCustomers(int id) {
         Optional<Employee> opt = this.employeeRepository.findById(id);
-
         Map<Integer, ClientFactorDTO> dtoMap = new HashMap<Integer, ClientFactorDTO>();
         if (opt.isPresent()) {
             Employee employee = opt.get();
@@ -144,9 +134,7 @@ public class UnderWritingServiceImpl implements UnderWritingService {
                                                 .insuranceName(contract.getInsurance().getName())
                                                 .build());
                             }
-
                         }
-
                     }
             );
         }
@@ -161,13 +149,11 @@ public class UnderWritingServiceImpl implements UnderWritingService {
     @Override
     public List<ContractDTO> getUnPassedContractList(int id) throws NoEmployeeException {
         List<ContractDTO> contractList = new ArrayList<>();
-
         Optional<Employee> opt = this.employeeRepository.findById(id);
         if (opt.isPresent()) {
             Employee employee = opt.get();
             List<Contract> contracts = this.contractRepository.findAllBySalesPersonAndUnderwritingPassed(employee, UnderWritingStatus.ONPROGRESS);
             contracts.forEach((contract) -> {
-
                 if (contract.getClient() instanceof RegisteredClient) {
                     RegisteredClient client = (RegisteredClient) contract.getClient();
                     if (!(client.getEnvironmentalFactor() == null ||
@@ -184,7 +170,6 @@ public class UnderWritingServiceImpl implements UnderWritingService {
                                         .build());
                     }
                 }
-
             });
         } else {
             throw new NoEmployeeException();
@@ -195,7 +180,6 @@ public class UnderWritingServiceImpl implements UnderWritingService {
     @Override
     public ResponseEntity<ContractDetailDTO> getContractDetailFactors(int contractId) {
         Optional<Contract> opt = this.contractRepository.findById(contractId);
-
         if (opt.isPresent()) {
             Contract contract = opt.get();
             ContractDetailDTO dto = ContractDetailDTO.builder()
@@ -225,10 +209,7 @@ public class UnderWritingServiceImpl implements UnderWritingService {
                 Long premiumRate = this.calculatePremiumRate(contract.getInsurance(), client.getEnvironmentalFactor().getJob());
                 contract.setPayment(premiumRate);
                 this.contractRepository.save(contract);
-                ;
             }
-
-
         }
     }
 
@@ -236,7 +217,6 @@ public class UnderWritingServiceImpl implements UnderWritingService {
     public Long calculatePremiumRate(Insurance insurance, Job clientJob) {
         InsuranceType insuranceType = insurance.getType();
         Long payIn = insurance.getBasicPremium();
-
         Long calculatePay = 0L;
         if (insuranceType.equals(InsuranceType.FIRE)) {
             calculatePay = (long) Math.round(payIn * this.firePremiumRate(clientJob));
@@ -258,7 +238,6 @@ public class UnderWritingServiceImpl implements UnderWritingService {
             for (Contract contract : contracts) {
                 if (contract.getClient() instanceof RegisteredClient) {
                     RegisteredClient client = (RegisteredClient) contract.getClient();
-
                     if (contract.getInsurance().getUwPolicy() != null && client.getEnvironmentalFactor() != null && client.getPhysicalFactor() != null && client.getFinancialFactor() != null)
                         dtoMap.add(
                                 ContractDTO.builder()
@@ -277,18 +256,14 @@ public class UnderWritingServiceImpl implements UnderWritingService {
 
     @Override
     public Map<Integer, ContractDetailDTO> findAllOnProgressContractList(int cid) {
-
         Map<Integer, ContractDetailDTO> contractDetailDTOMap = new HashMap<>();
-
         Optional<Employee> temp = this.employeeRepository.findById(cid);
         if (temp.isPresent()) {
             Employee employee = temp.get();
             List<Contract> contracts = this.contractRepository.findAllBySalesPersonAndUnderwritingPassed(employee, UnderWritingStatus.ONPROGRESS);
-
             for (Contract contract : contracts) {
                 if (contract.getClient() instanceof RegisteredClient) {
                     RegisteredClient client = (RegisteredClient) contract.getClient();
-
                     if (contract.getInsurance().getUwPolicy() != null && client.getEnvironmentalFactor() != null && client.getPhysicalFactor() != null && client.getFinancialFactor() != null)
                         contractDetailDTOMap.put(
                                 contract.getId(),

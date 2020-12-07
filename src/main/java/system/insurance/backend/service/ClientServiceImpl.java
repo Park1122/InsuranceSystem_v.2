@@ -25,14 +25,14 @@ public class ClientServiceImpl implements ClientService {
     private final FinancialFactorRepository financialFactorRepository;
     private final EmployeeRepository employeeRepository;
 
-    public ClientServiceImpl(EmployeeRepository employeeRepository,ClientRepository clientRepository, RegisteredClientRepository registeredClientRepository, ContractRepository contractRepository,PhysicalFactorRepository physicalFactorRepository,EnvironmentalFactorRepository environmentalFactorRepository,FinancialFactorRepository financialFactorRepository) {
+    public ClientServiceImpl(EmployeeRepository employeeRepository, ClientRepository clientRepository, RegisteredClientRepository registeredClientRepository, ContractRepository contractRepository, PhysicalFactorRepository physicalFactorRepository, EnvironmentalFactorRepository environmentalFactorRepository, FinancialFactorRepository financialFactorRepository) {
         this.clientRepository = clientRepository;
         this.registeredClientRepository = registeredClientRepository;
         this.contractRepository = contractRepository;
-        this.physicalFactorRepository=physicalFactorRepository;
-        this.environmentalFactorRepository=environmentalFactorRepository;
-        this.financialFactorRepository=financialFactorRepository;
-        this.employeeRepository=employeeRepository;
+        this.physicalFactorRepository = physicalFactorRepository;
+        this.environmentalFactorRepository = environmentalFactorRepository;
+        this.financialFactorRepository = financialFactorRepository;
+        this.employeeRepository = employeeRepository;
     }
 
     @Override
@@ -49,13 +49,12 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public List<ClientDTO> findAllUnregisteredClint() {
         List<Client> clientList = this.clientRepository.findAll();
-        List<ClientDTO> clientDTOList = new ArrayList<>() ;
-        clientList.forEach((client)-> {
-            if(client instanceof NotRegisteredClient) {
-                System.out.println(client.getName()+" 가망고객님.");
-
-                String gift="";
-                if(((NotRegisteredClient) client).getGift()!=null) gift= ((NotRegisteredClient) client).getGift().getGift();
+        List<ClientDTO> clientDTOList = new ArrayList<>();
+        clientList.forEach((client) -> {
+            if (client instanceof NotRegisteredClient) {
+                String gift = "";
+                if (((NotRegisteredClient) client).getGift() != null)
+                    gift = ((NotRegisteredClient) client).getGift().getGift();
                 clientDTOList.add(
                         ClientDTO.builder()
                                 .name(client.getName())
@@ -72,8 +71,8 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public ClientDTO findUnregisteredClientByID(int cid) {
         Optional<Client> client = this.clientRepository.findById(cid);
-        if(client.isPresent()) {
-         Client client1= client.get();
+        if (client.isPresent()) {
+            Client client1 = client.get();
             return ClientDTO
                     .builder()
                     .contact(client1.getContact())
@@ -89,7 +88,6 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public List<Client> getOnProgressContractAndLessFactorCustomers(int id) {
         Optional<Employee> opt = this.employeeRepository.findById(id);
-
         List<Client> clientList = new ArrayList<>();
         if (opt.isPresent()) {
             Employee employee = opt.get();
@@ -100,7 +98,7 @@ public class ClientServiceImpl implements ClientService {
                             if (client.getEnvironmentalFactor() == null ||
                                     client.getFinancialFactor() == null ||
                                     client.getPhysicalFactor() == null) {
-                               clientList.add(client);
+                                clientList.add(client);
                             }
                         }
                     }
@@ -112,23 +110,23 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public ClientFactorInfoDTO getClientFactorInfos(int eid) {
 
-        Map<String,String> clientList = new HashMap<>();
-        for(Client client: this.getOnProgressContractAndLessFactorCustomers(eid)){
-            clientList.put(client.getId()+"", client.getName()+" "+client.getSex());
+        Map<String, String> clientList = new HashMap<>();
+        for (Client client : this.getOnProgressContractAndLessFactorCustomers(eid)) {
+            clientList.put(client.getId() + "", client.getName() + " " + client.getSex());
         }
 
-        Map<String,String> smokeList = new HashMap<>();
-        for(SmokeFrequency smokeFrequency: SmokeFrequency.values()){
+        Map<String, String> smokeList = new HashMap<>();
+        for (SmokeFrequency smokeFrequency : SmokeFrequency.values()) {
             smokeList.put(smokeFrequency.name(), smokeFrequency.getDescription());
         }
 
-        Map<String,String> drinkList = new HashMap<>();
-        for(DrinkingFrequency drinkingFrequency: DrinkingFrequency.values()){
+        Map<String, String> drinkList = new HashMap<>();
+        for (DrinkingFrequency drinkingFrequency : DrinkingFrequency.values()) {
             drinkList.put(drinkingFrequency.name(), drinkingFrequency.getDescription());
         }
 
-        Map<String,String> jobList = new HashMap<>();
-        for(Job job: Job.values()){
+        Map<String, String> jobList = new HashMap<>();
+        for (Job job : Job.values()) {
             jobList.put(job.name(), job.getDescription());
         }
 
@@ -136,27 +134,32 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public void saveClientFactors(int cid, String physicalSmokeFrequency, String physicalDrinkingFrequency, String environmentalDangerousArea, String environmentalDangerousHobby, String environmentalJob, long financialIncome, int financialCreditRating, long financialProperty) throws NoClientException{
+    public void saveClientFactors(int cid, String physicalSmokeFrequency, String physicalDrinkingFrequency, String environmentalDangerousArea, String environmentalDangerousHobby, String environmentalJob, long financialIncome, int financialCreditRating, long financialProperty) throws NoClientException {
         Optional<Client> client = this.clientRepository.findById(cid);
         RegisteringClient client1 = (RegisteredClient) client.orElseThrow(NoClientException::new);
 
-        //////////
-        SmokeFrequency smokeFrequency=null;
-        for(SmokeFrequency sFreq : SmokeFrequency.values()){
-            if (sFreq.name().equals(physicalSmokeFrequency)){smokeFrequency=sFreq;}
+        SmokeFrequency smokeFrequency = null;
+        for (SmokeFrequency sFreq : SmokeFrequency.values()) {
+            if (sFreq.name().equals(physicalSmokeFrequency)) {
+                smokeFrequency = sFreq;
+            }
         }
-        DrinkingFrequency drinkingFrequency=null;
-        for(DrinkingFrequency dFreq: DrinkingFrequency.values()){
-            if(dFreq.name().equals(physicalDrinkingFrequency)){drinkingFrequency=dFreq;}
+        DrinkingFrequency drinkingFrequency = null;
+        for (DrinkingFrequency dFreq : DrinkingFrequency.values()) {
+            if (dFreq.name().equals(physicalDrinkingFrequency)) {
+                drinkingFrequency = dFreq;
+            }
         }
-        PhysicalFactor physicalFactor= PhysicalFactor.builder().smokeFrequency(smokeFrequency).drinkingFrequency(drinkingFrequency).build();
+        PhysicalFactor physicalFactor = PhysicalFactor.builder().smokeFrequency(smokeFrequency).drinkingFrequency(drinkingFrequency).build();
         this.physicalFactorRepository.save(physicalFactor);
         client1.setPhysicalFactor(physicalFactor);
 
         //////////
-        Job job=null;
-        for(Job j: Job.values()){
-            if(j.name().equals(environmentalJob)){job=j;}
+        Job job = null;
+        for (Job j : Job.values()) {
+            if (j.name().equals(environmentalJob)) {
+                job = j;
+            }
         }
         EnvironmentalFactor environmentalFactor = EnvironmentalFactor.builder().dangerousArea(environmentalDangerousArea).dangerousHobby(environmentalDangerousHobby).job(job).build();
         this.environmentalFactorRepository.save(environmentalFactor);
@@ -173,16 +176,16 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public Map<String, String> getSexList() {
-        Map<String,String> map = new HashMap<>();
-        for(Sex sex: Sex.values()){
-            map.put(sex.name(),sex.getDesc());
+        Map<String, String> map = new HashMap<>();
+        for (Sex sex : Sex.values()) {
+            map.put(sex.name(), sex.getDesc());
         }
         return map;
     }
 
     @Override
     public boolean saveNewUnRegisteredClient(String customerName, String contact, int age, String email, String sex) {
-        Sex sex1= Sex.valueOf(sex);
+        Sex sex1 = Sex.valueOf(sex);
         this.clientRepository.save(NotRegisteredClient.builder().name(customerName).contact(contact).age(age).email(email).sex(sex1).build());
         return true;
     }
@@ -190,13 +193,13 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public ClientDTO searchClientByIdAndName(int id, String name) {
         ClientDTO clientDTO = null;
-        Optional<Client> temp =this.clientRepository.findByIdAndName(id,name);
-        if(temp.isPresent()) {
+        Optional<Client> temp = this.clientRepository.findByIdAndName(id, name);
+        if (temp.isPresent()) {
             Client client = temp.get();
-            clientDTO=ClientDTO.builder().id(client.getId()).name(client.getName()).build();
+            clientDTO = ClientDTO.builder().id(client.getId()).name(client.getName()).build();
         }
         return clientDTO;
-        }
+    }
 
     @Override
     public ClientDTO getRegisteringClientDetail(int cid) throws NoClientException {
@@ -246,8 +249,6 @@ public class ClientServiceImpl implements ClientService {
         if (client.isPresent()) return getClientDTO(client.get());
         return ClientDTO.builder().build();
     }
-
-
 
     private ClientDTO getClientDTO(Client client) {
         RegisteredClient registeredClient = (RegisteredClient) client;

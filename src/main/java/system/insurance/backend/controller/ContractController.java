@@ -23,12 +23,14 @@ public class ContractController {
         this.underWritingService=underWritingService;
     }
 
+    //직원아이디로 계약된 계약 불러오기.
     @GetMapping("/list/responsibility")
     @ResponseBody
     public List<ContractDTO> getPassedContractListByResponsiblity(@RequestParam("eid") int eid){
         return this.underWritingService.getPassedContractList(eid);
     }
 
+    //직원 아이디로 모든 계약 불러오기.
     @GetMapping("/policy_establishment")
     @ResponseBody
     public List<ContractDTO> getContractListByResponsibility(@RequestParam("eid") int eid) {
@@ -40,11 +42,13 @@ public class ContractController {
         }
     }
 
-
+    //?? 옮길까?
+    ///////////////////////////////
+    ///////////////////////////////
+    //손해율 계산하기.
     @GetMapping("/loss_rate")
     @ResponseBody
     public List<LossRateDTO> getLossRateFor(@RequestParam("term")int term){
-//        System.out.println("lossRate-"+term);
         return this.salesService.getLossRateListFor(term);
     }
 

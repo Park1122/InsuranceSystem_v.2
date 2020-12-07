@@ -26,28 +26,32 @@ public class InsuranceController {
         this.insuranceService = insuranceService;
     }
 
+    // 보험 작성을 위한 폼 용 정보들 묶음.
     @GetMapping("/info")
     @ResponseBody
     public InsuranceInfoDTO getInsuranceInfoList() {
         return this.insuranceService.getInsuranceInfoList();
-
     }
 
+    //개발중인 보험 목록.
     @GetMapping("/product/developing")
     public List<DevelopingInsuranceDTO> getDevelopingInsuranceList() {
         return this.insuranceService.getDevelopingInsuranceList();
     }
 
+    //하나의 보험 정보.
     @GetMapping("/product/detail")
     public ResponseEntity<InsuranceDTO> getInsuranceDetails(@RequestParam(name = "id") int id){
         return ResponseEntity.of(this.insuranceService.getInsuranceDetails(id));
     }
 
+    //인가보고서 목록.
     @GetMapping("/authorize")
     public List<AuthorizationReportDTO> getAuthorizationReportList(){
         return this.insuranceService.getAuthorizationReportList();
     }
 
+    //인가보고서 업로드.
     @PostMapping("/authorize/upload")
     public ResponseEntity<Boolean> uploadAuthorizationDoc(@RequestParam(name = "file") MultipartFile file,
                                                           @RequestParam(name="author_eid")Integer author_eid) {
@@ -59,6 +63,7 @@ public class InsuranceController {
         }
     }
 
+    //evaluation report 업로드.
     @PostMapping("/evaluation")
     public ResponseEntity<Boolean> uploadEvaluationReport(@RequestParam(name = "report") List<MultipartFile> files,
                                                           @RequestParam(name = "insuranceId") int id) {
@@ -70,6 +75,7 @@ public class InsuranceController {
         }
     }
 
+    //evaluation report 다운로드.
     @GetMapping("/evaluation")
     public FileSystemResource downloadEvaluationReport(@RequestParam(name = "id")int id, HttpServletResponse res){
         res.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment");
@@ -81,6 +87,7 @@ public class InsuranceController {
         }
     }
 
+    //새로운 보험 설계하여 등록하기.
     @PostMapping("/product/design")
     public boolean insuranceDesign(@RequestParam(name = "eid") int eid, @RequestParam(name = "type") String type, @RequestParam(name = "name") String name,  @RequestParam(name = "limit") List<Long> limit, @RequestParam(name = "condition") List<String> condition, @RequestParam(name = "special")List<Boolean> special, @RequestParam(name = "targetClient")List<String> targetClient) {
         return this.insuranceService.insuranceDesign(eid, type, name, limit, condition, special, targetClient);

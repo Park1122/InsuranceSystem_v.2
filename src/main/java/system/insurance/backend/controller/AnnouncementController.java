@@ -29,6 +29,7 @@ public class AnnouncementController {
         return this.announcementService.findAll();
     }
 
+    //공지 중 하나.
     @GetMapping("/content")
     @ResponseBody
     public ResponseEntity<AnnouncementDTO> getContent(@RequestParam(name = "id") int id){

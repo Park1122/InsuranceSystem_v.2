@@ -13,7 +13,6 @@ import javax.persistence.Id;
 @Setter
 @NoArgsConstructor(access= AccessLevel.PROTECTED)
 public class ClientGift {
-
     @Id
     private int id;
     private String gift;

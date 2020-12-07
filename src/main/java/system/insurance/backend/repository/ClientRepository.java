@@ -11,11 +11,8 @@ import java.util.Optional;
 
 public interface ClientRepository extends JpaRepository<Client, Integer> {
 
-
-
     @Query("from RegisteringClient")
     List<Client> findAllByType(ClientType type);
-
 
     @Query("from RegisteringClient")
     Optional<Client> findByRrn(String rrn);

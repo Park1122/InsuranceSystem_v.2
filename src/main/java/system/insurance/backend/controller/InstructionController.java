@@ -20,6 +20,7 @@ public class InstructionController {
         this.salesService = salesService;
     }
 
+    //sales instruction 저장하기.
     @PostMapping("/sales/register")
     public ResponseEntity<Boolean> registerInstruction(@RequestBody Map<String, String> body) {
         try {
@@ -30,6 +31,7 @@ public class InstructionController {
         }
     }
 
+    //sales Instruction 목록 불러오기.
     @GetMapping("/sales/list")
     @ResponseBody
     public List<InstructionDTO> getInstructionList() {

@@ -67,9 +67,6 @@ public class InsuranceServiceImpl implements InsuranceService {
         for (InsuranceCompany company:companies) {
             companyList.put(company.getCompany(),company.getCompanyName());
         }
-//        for (InsuranceCompany value : InsuranceCompany.values()) {
-//            companyList.put(value.name(), value.getDescription());
-//        }
         return companyList;
     }
 
@@ -158,7 +155,6 @@ public class InsuranceServiceImpl implements InsuranceService {
 
     @Override
     public boolean uploadAuthorizationDoc(MultipartFile file, Integer author_eid) throws IOException {
-
         String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
         if (fileName.contains(".."))
             throw new FileUploadException("파일명에 부적절한 문자가 포함되어 있습니다. " + fileName);
@@ -214,7 +210,6 @@ public class InsuranceServiceImpl implements InsuranceService {
         Insurance insurance = this.insuranceRepository.save(Insurance.builder()
                 .author(employee)
                 .company(this.insuranceCompanyRepository.findByCompany("HANHWA"))
-//                .company(InsuranceCompany.HANHWA)
                 .date(LocalDate.now())
                 .name(name)
                 .status(InsuranceStatus.DEVELOPING)
@@ -248,14 +243,11 @@ public class InsuranceServiceImpl implements InsuranceService {
     @Override
     public Map<String, String> getNoPolicyInsuranceList() {
         Map<String, String> dtoHashMap = new HashMap<>();
-
-
         List<Insurance> insurances = this.insuranceRepository.findAllByStatus(InsuranceStatus.ON_SALE);
         insurances.forEach((insurance)->{
             if(insurance.getUwPolicy()==null)
             dtoHashMap.put(insurance.getId()+"", insurance.getType().getDescription()+" | "+insurance.getCompany().getCompanyName()+" | "+insurance.getName());
         });
-//        System.out.print("ㅇㅅㅇㅅㅇㅅ"+dtoHashMap.size());
         return dtoHashMap;
     }
 
