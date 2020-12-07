@@ -21,4 +21,6 @@ public interface SalesService{
     List<CounselingDTO> getRecordsByEmployeeId(int eid) throws NoEmployeeException;
 
     CounselingDTO getRecordByCounselingId(int id);
+
+    boolean saveCounselingRecordById(String content, int eid,int cid)throws NoEmployeeException;
 }

@@ -11,7 +11,6 @@ import system.insurance.backend.service.*;
 import javax.mail.MessagingException;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/client")
@@ -33,7 +32,6 @@ public class ClientController {
                                   @RequestParam(name="environmentalDangerousArea") String environmentalDangerousArea,@RequestParam(name="environmentalDangerousHobby") String environmentalDangerousHobby,@RequestParam(name="environmentalJob") String environmentalJob,
                                   @RequestParam(name="financialIncome") long financialIncome,@RequestParam(name="financialCreditRating") int financialCreditRating,@RequestParam(name="financialProperty") long financialProperty){
         try {
-//            System.out.println("post come");
             this.clientService.saveClientFactors(cid, physicalSmokeFrequency, physicalDrinkingFrequency, environmentalDangerousArea, environmentalDangerousHobby, environmentalJob, financialIncome, financialCreditRating, financialProperty);
             this.underWritingService.savePremiumRate(cid);
 
@@ -87,6 +85,12 @@ public class ClientController {
     @GetMapping("/registered/search{rrn}")
     public ResponseEntity<ClientDTO> searchRegisteredByRRN(@PathVariable String rrn){
         return ResponseEntity.ok(this.clientService.searchRegisteredByRRN(rrn));
+    }
+
+    @GetMapping("/search/nameAndId")
+    public ResponseEntity<ClientDTO> searchClient(@RequestParam(name = "name") String name,@RequestParam(name = "id") int id){
+        System.out.println("id:"+id+" name:"+name+" 하하하");
+        return ResponseEntity.ok(this.clientService.searchClientByIdAndName(id,name));
     }
 
     @PostMapping("/new/register")

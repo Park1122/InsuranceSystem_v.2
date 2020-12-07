@@ -27,6 +27,16 @@ public class CounselingController {
         }
     }
 
+    @PostMapping("/record/registerById")
+    public boolean saveRecord(@RequestParam(name = "content") String content, @RequestParam(name = "eid")int eid, @RequestParam(name = "cid")int cid){
+        try {
+            return this.salesService.saveCounselingRecordById(content, eid,cid);
+        } catch (NoEmployeeException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     @GetMapping("/record/get")
     public List<CounselingDTO> getRecords(@RequestParam(name = "eid")int eid){
         try {

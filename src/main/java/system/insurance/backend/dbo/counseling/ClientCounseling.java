@@ -29,9 +29,10 @@ public class ClientCounseling {
     private LocalDate date;
 
     @Builder
-    public ClientCounseling(Employee counselor, String content, LocalDate date) {
+    public ClientCounseling(Employee counselor, String content, LocalDate date,Client client) {
         this.counselor = counselor;
         this.content = content;
         this.date = date;
+        this.client=client;
     }
 }

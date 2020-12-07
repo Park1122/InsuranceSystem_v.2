@@ -3,6 +3,7 @@ package system.insurance.backend.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import system.insurance.backend.dbo.client.Client;
 import system.insurance.backend.dbo.contract.Contract;
 import system.insurance.backend.dbo.contract.PremiumPayment;
 import system.insurance.backend.dbo.counseling.ClientCounseling;
@@ -32,11 +33,13 @@ public class SalesServiceImpl implements SalesService {
     private final InsuranceRepository insuranceRepository;
 
     private final PremiumPaymentRepository premiumPaymentRepository;
+    private final ClientRepository clientRepository;
 
     @Autowired
     public SalesServiceImpl(SalesInstructionRepository salesInstructionRepository, ContractRepository contractRepository,
                             EmployeeRepository employeeRepository, InsuranceRepository insuranceRepository,
-                            ClientCounselingRepository clientCounselingRepository, PremiumPaymentRepository premiumPaymentRepository
+                            ClientCounselingRepository clientCounselingRepository, PremiumPaymentRepository premiumPaymentRepository,
+                            ClientRepository clientRepository
     ) {
         this.salesInstructionRepository = salesInstructionRepository;
         this.contractRepository = contractRepository;
@@ -44,6 +47,7 @@ public class SalesServiceImpl implements SalesService {
         this.clientCounselingRepository = clientCounselingRepository;
         this.premiumPaymentRepository = premiumPaymentRepository;
         this.insuranceRepository = insuranceRepository;
+        this.clientRepository=clientRepository;
     }
 
 
@@ -114,6 +118,22 @@ public class SalesServiceImpl implements SalesService {
     }
 
     @Override
+    public boolean saveCounselingRecordById(String content, int eid, int cid) throws NoEmployeeException {
+        Optional<Employee> employee = this.employeeRepository.findById(eid);
+        Employee employee1 = employee.orElseThrow(NoEmployeeException::new);
+        Optional<Client> temp= this.clientRepository.findById(cid);
+        if(temp.isPresent()) {
+            Client client =temp.get();
+            this.clientCounselingRepository.save(ClientCounseling.builder()
+                    .content(content)
+                    .counselor(employee1)
+                    .client(client)
+                    .date(LocalDate.now()).build());
+        }
+        return true;
+    }
+
+    @Override
     public boolean saveCounselingRecord(String content, int eid) throws NoEmployeeException {
         Optional<Employee> employee = this.employeeRepository.findById(eid);
         Employee employee1 = employee.orElseThrow(NoEmployeeException::new);
@@ -163,7 +183,7 @@ public class SalesServiceImpl implements SalesService {
                         }
 
                     }
-                    float lossRate = given / ((got * percent) / 100);
+                    float lossRate = given / ((got * percent) / 100f);
 //                    System.out.println(given + "/ ((" + got + "* " + percent + ")/100)");
                     lossRateList.add(
                             LossRateDTO.builder()

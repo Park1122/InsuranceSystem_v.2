@@ -13,6 +13,8 @@ public interface ClientService {
 
     Map<Integer, ClientDTO> findAllRegisteringClient();
 
+    ClientDTO searchClientByIdAndName(int id, String name);
+
     ClientDTO getRegisteringClientDetail(int cid) throws NoClientException;
 
     boolean setConformity(int cid, boolean conformity, String reason) throws NoClientException;
@@ -28,4 +30,5 @@ public interface ClientService {
     ClientFactorInfoDTO getClientFactorInfos(int eid);
 
     void saveClientFactors(int cid, String physicalSmokeFrequency, String physicalDrinkingFrequency, String environmentalDangerousArea, String environmentalDangerousHobby, String environmentalJob, long financialIncome, int financialCreditRating, long financialProperty) throws NoClientException;
+
 }

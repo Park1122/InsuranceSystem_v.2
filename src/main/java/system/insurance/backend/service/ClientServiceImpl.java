@@ -172,6 +172,17 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
+    public ClientDTO searchClientByIdAndName(int id, String name) {
+        ClientDTO clientDTO = null;
+        Optional<Client> temp =this.clientRepository.findByIdAndName(id,name);
+        if(temp.isPresent()) {
+            Client client = temp.get();
+            clientDTO=ClientDTO.builder().id(client.getId()).name(client.getName()).build();
+        }
+        return clientDTO;
+        }
+
+    @Override
     public ClientDTO getRegisteringClientDetail(int cid) throws NoClientException {
         Optional<Client> client = this.clientRepository.findById(cid);
         RegisteringClient client1 = (RegisteringClient) client.orElseThrow(NoClientException::new);
