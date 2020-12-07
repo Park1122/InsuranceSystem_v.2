@@ -31,4 +31,7 @@ public interface ClientService {
 
     void saveClientFactors(int cid, String physicalSmokeFrequency, String physicalDrinkingFrequency, String environmentalDangerousArea, String environmentalDangerousHobby, String environmentalJob, long financialIncome, int financialCreditRating, long financialProperty) throws NoClientException;
 
+    Map<String, String> getSexList();
+
+    boolean saveNewUnRegisteredClient(String customerName, String contact, int age, String email, String sex);
 }

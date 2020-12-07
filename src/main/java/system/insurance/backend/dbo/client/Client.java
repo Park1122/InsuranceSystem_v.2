@@ -1,9 +1,6 @@
 package system.insurance.backend.dbo.client;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
@@ -22,16 +19,19 @@ public abstract class Client implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    protected int id;
     @Column(length = 15)
-    private String contact;
-    private int age;
+    protected String contact;
+    protected int age;
     @Enumerated(EnumType.STRING)
-    private Sex sex;
+    protected Sex sex;
     @Column(length = 30)
-    private String name;
+    protected String name;
     @Column(length = 30)
-    private String email;
+    protected String email;
 //    @Enumerated(EnumType.STRING)
 //private ClientType type;
+
+
+
 }

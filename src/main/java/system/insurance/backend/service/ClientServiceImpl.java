@@ -172,6 +172,22 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
+    public Map<String, String> getSexList() {
+        Map<String,String> map = new HashMap<>();
+        for(Sex sex: Sex.values()){
+            map.put(sex.name(),sex.getDesc());
+        }
+        return map;
+    }
+
+    @Override
+    public boolean saveNewUnRegisteredClient(String customerName, String contact, int age, String email, String sex) {
+        Sex sex1= Sex.valueOf(sex);
+        this.clientRepository.save(NotRegisteredClient.builder().name(customerName).contact(contact).age(age).email(email).sex(sex1).build());
+        return true;
+    }
+
+    @Override
     public ClientDTO searchClientByIdAndName(int id, String name) {
         ClientDTO clientDTO = null;
         Optional<Client> temp =this.clientRepository.findByIdAndName(id,name);

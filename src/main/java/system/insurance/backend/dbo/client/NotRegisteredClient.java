@@ -16,7 +16,14 @@ public class NotRegisteredClient extends Client {
     @OneToOne
     private ClientGift gift;
 
+
     @Builder
-    public NotRegisteredClient(String gift) {
+    public NotRegisteredClient(String contact, int age, Sex sex, String name, String email,ClientGift gift) {
+        this.contact = contact;
+        this.age = age;
+        this.sex = sex;
+        this.name = name;
+        this.email = email;
+        this.gift=gift;
     }
 }

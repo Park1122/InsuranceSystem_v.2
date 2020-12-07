@@ -27,6 +27,18 @@ public class ClientController {
         this.underWritingService=underWritingService;
     }
 
+    @PostMapping("/save/unRegistered")
+    public boolean saveNewUnRegisteredClient(@RequestParam(name="customerName")String customerName, @RequestParam(name="contact")String contact,
+                                             @RequestParam(name="age")int age,@RequestParam(name="email")String email,@RequestParam(name="sex")String sex){
+        System.out.println(customerName+contact+email+" "+sex);
+        return this.clientService.saveNewUnRegisteredClient(customerName,contact, age,email,sex );
+    }
+
+    @GetMapping("/sex/list")
+    public Map<String,String> getSexList(){
+        return clientService.getSexList();
+    }
+
     @PostMapping("/save/Factors")
     public void saveClientFactors(@RequestParam(name="cid") int cid,@RequestParam(name="physicalSmokeFrequency") String physicalSmokeFrequency,@RequestParam(name="physicalDrinkingFrequency") String physicalDrinkingFrequency,
                                   @RequestParam(name="environmentalDangerousArea") String environmentalDangerousArea,@RequestParam(name="environmentalDangerousHobby") String environmentalDangerousHobby,@RequestParam(name="environmentalJob") String environmentalJob,
