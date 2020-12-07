@@ -42,9 +42,6 @@ public class ContractController {
         }
     }
 
-    //?? 옮길까?
-    ///////////////////////////////
-    ///////////////////////////////
     //손해율 계산하기.
     @GetMapping("/loss_rate")
     @ResponseBody

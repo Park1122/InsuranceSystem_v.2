@@ -29,9 +29,4 @@ public abstract class Client implements Serializable {
     protected String name;
     @Column(length = 30)
     protected String email;
-//    @Enumerated(EnumType.STRING)
-//private ClientType type;
-
-
-
 }

@@ -71,9 +71,6 @@ public class ClientController {
         return this.clientService.findAllRegisteringClient();
     }
 
-    //옮길까?
-    //////////////////////////////
-    //////////////////////////////
     //아직 승인 안한 계약목록
     @GetMapping("/onProgress/list")
     public Map<Integer, ContractDetailDTO> findAllOnProgressContractList(@RequestParam(name = "eid") int id){
@@ -112,14 +109,9 @@ public class ClientController {
     //등록된 고객을 이름과 아이디로 찾기
     @GetMapping("/search/nameAndId")
     public ResponseEntity<ClientDTO> searchClient(@RequestParam(name = "name") String name,@RequestParam(name = "id") int id){
-        System.out.println("id:"+id+" name:"+name+" 하하하");
         return ResponseEntity.ok(this.clientService.searchClientByIdAndName(id,name));
     }
 
-    ////////////////옮길까??
-    ///////////////////////////////
-    ///////////////////////////////
-    //////////////////////////////
     //고객 상담 저장.
     @PostMapping("/new/register")
     public boolean newClient(@RequestParam(name = "content") String content, @RequestParam(name = "eid")int eid, @RequestParam(name = "email")String email) {

@@ -15,6 +15,7 @@ import system.insurance.backend.service.InsuranceService;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/insurance")
@@ -37,6 +38,12 @@ public class InsuranceController {
     @GetMapping("/product/developing")
     public List<DevelopingInsuranceDTO> getDevelopingInsuranceList() {
         return this.insuranceService.getDevelopingInsuranceList();
+    }
+
+    //판매중인 보험 목록.
+    @GetMapping("/product/onSale")
+    public Map<String,InsuranceDTO> getOnSaleInsuranceList() {
+        return this.insuranceService.getOnSaleInsuranceList();
     }
 
     //하나의 보험 정보.

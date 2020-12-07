@@ -33,6 +33,8 @@ public interface InsuranceService {
 
     Map<String, String> getNoPolicyInsuranceList();
 
+    Map<String, InsuranceDTO> getOnSaleInsuranceList();
+
 
 //    void savePremiumRate(int cid);
 }

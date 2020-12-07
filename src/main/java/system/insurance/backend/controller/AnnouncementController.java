@@ -33,7 +33,6 @@ public class AnnouncementController {
     @GetMapping("/content")
     @ResponseBody
     public ResponseEntity<AnnouncementDTO> getContent(@RequestParam(name = "id") int id){
-        System.out.println(id);
         return ResponseEntity.of(this.announcementService.findContent(id));
     }
 }

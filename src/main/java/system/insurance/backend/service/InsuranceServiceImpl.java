@@ -39,7 +39,7 @@ public class InsuranceServiceImpl implements InsuranceService {
     public InsuranceServiceImpl(FileUploadProperties prop, InsuranceRepository insuranceRepository, GuaranteeInfoRepository guaranteeRepository,
                                 SalesTargetRepository salesTargetRepository, EvaluationReportRepository evaluationReportRepository,
                                 EmployeeRepository employeeRepository, AuthorizationReportRepository authorizationReportRepository
-    ,InsuranceCompanyRepository insuranceCompanyRepository) {
+            , InsuranceCompanyRepository insuranceCompanyRepository) {
         this.insuranceRepository = insuranceRepository;
         this.guaranteeRepository = guaranteeRepository;
         this.salesTargetRepository = salesTargetRepository;
@@ -50,7 +50,7 @@ public class InsuranceServiceImpl implements InsuranceService {
                 .toAbsolutePath().normalize();
         this.evaluationReportPath = Paths.get(prop.getInsuranceEvaluationReport())
                 .toAbsolutePath().normalize();
-        this.insuranceCompanyRepository=insuranceCompanyRepository;
+        this.insuranceCompanyRepository = insuranceCompanyRepository;
         try {
             Files.createDirectories(this.authorizationDocPath);
             Files.createDirectories(this.evaluationReportPath);
@@ -64,8 +64,8 @@ public class InsuranceServiceImpl implements InsuranceService {
     public Map<String, String> getInsuranceCompanyList() {
         Map<String, String> companyList = new HashMap<>();
         List<InsuranceCompany> companies = this.insuranceCompanyRepository.findAll();
-        for (InsuranceCompany company:companies) {
-            companyList.put(company.getCompany(),company.getCompanyName());
+        for (InsuranceCompany company : companies) {
+            companyList.put(company.getCompany(), company.getCompanyName());
         }
         return companyList;
     }
@@ -119,6 +119,42 @@ public class InsuranceServiceImpl implements InsuranceService {
                 .name(insurance.getName())
                 .build()));
         return dtoList;
+    }
+
+
+    @Override
+    public Map<String, InsuranceDTO> getOnSaleInsuranceList() {
+        List<Insurance> list = this.insuranceRepository.findAllByStatus(InsuranceStatus.ON_SALE);
+        Map<String, InsuranceDTO> dtoMap = new HashMap<>();
+
+        list.forEach((insurance) -> {
+            List<GuaranteeInfo> guaranteeInfoList = this.guaranteeRepository.findAllByInsurance(insurance);
+            List<SalesTarget> salesTargetList = this.salesTargetRepository.findAllByInsurance(insurance);
+            List<EvaluationReport> evaluationReportList = this.evaluationReportRepository.findAllByInsurance(insurance);
+
+            Map<Integer, String> salesTargetStringList = new HashMap<>();
+            Map<Integer, GuaranteeInfoWrapper> guaranteeInfoStringList = new HashMap<>();
+            Map<Integer, String> evaluationInfo = new HashMap<>();
+
+            guaranteeInfoList.forEach(guaranteeInfo -> guaranteeInfoStringList.put(guaranteeInfo.getId(), GuaranteeInfoWrapper.builder()
+                    .condition(guaranteeInfo.getGuaranteeCondition())
+                    .limit(guaranteeInfo.getGuaranteeLimit())
+                    .special(guaranteeInfo.isSpecialCondition())
+                    .build()));
+            salesTargetList.forEach(salesTarget -> salesTargetStringList.put(salesTarget.getId(), salesTarget.getTarget()));
+            evaluationReportList.forEach(evaluationReport -> evaluationInfo.put(evaluationReport.getId(), evaluationReport.getDate() + " " +
+                    new File(evaluationReport.getPath()).getName()));
+
+            dtoMap.put(insurance.getId() + "",
+                    InsuranceDTO.builder()
+                            .name(insurance.getName())
+                            .guaranteeInfoList(guaranteeInfoStringList)
+                            .salesTargetList(salesTargetStringList)
+                            .evaluationReportList(evaluationInfo)
+                            .build());
+        });
+
+        return dtoMap;
     }
 
     @Override
@@ -231,6 +267,7 @@ public class InsuranceServiceImpl implements InsuranceService {
         }
         return true;
     }
+
     @Override
     public InsuranceInfoDTO getInsuranceInfoList() {
         return InsuranceInfoDTO.builder()
@@ -244,13 +281,12 @@ public class InsuranceServiceImpl implements InsuranceService {
     public Map<String, String> getNoPolicyInsuranceList() {
         Map<String, String> dtoHashMap = new HashMap<>();
         List<Insurance> insurances = this.insuranceRepository.findAllByStatus(InsuranceStatus.ON_SALE);
-        insurances.forEach((insurance)->{
-            if(insurance.getUwPolicy()==null)
-            dtoHashMap.put(insurance.getId()+"", insurance.getType().getDescription()+" | "+insurance.getCompany().getCompanyName()+" | "+insurance.getName());
+        insurances.forEach((insurance) -> {
+            if (insurance.getUwPolicy() == null)
+                dtoHashMap.put(insurance.getId() + "", insurance.getType().getDescription() + " | " + insurance.getCompany().getCompanyName() + " | " + insurance.getName());
         });
         return dtoHashMap;
     }
-
 
 
 }

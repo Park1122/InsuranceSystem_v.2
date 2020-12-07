@@ -46,7 +46,6 @@ public class UserController {
     public FileSystemResource getFile(@PathVariable("id") String id, HttpServletResponse res){
         res.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
         res.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment");
-        System.out.println(id);
         return new FileSystemResource(new File("E://오버로드+13.pdf"));
     }
 }

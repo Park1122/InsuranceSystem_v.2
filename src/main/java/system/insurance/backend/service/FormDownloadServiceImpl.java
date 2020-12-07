@@ -30,7 +30,6 @@ public class FormDownloadServiceImpl implements FormDownloadService{
     @Override
     public File downloadForm(String fileName) throws IOException {
         Path filePath = this.fileLocation.resolve(fileName).normalize();
-        System.out.println();
         File file = new File(filePath.toAbsolutePath().toString());
         if(file.exists()) {
             return file;
