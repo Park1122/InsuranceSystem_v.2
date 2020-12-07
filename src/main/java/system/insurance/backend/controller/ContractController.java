@@ -23,6 +23,12 @@ public class ContractController {
         this.underWritingService=underWritingService;
     }
 
+    @GetMapping("/list/responsibility")
+    @ResponseBody
+    public List<ContractDTO> getPassedContractListByResponsiblity(@RequestParam("eid") int eid){
+        return this.underWritingService.getPassedContractList(eid);
+    }
+
     @GetMapping("/policy_establishment")
     @ResponseBody
     public List<ContractDTO> getContractListByResponsibility(@RequestParam("eid") int eid) {

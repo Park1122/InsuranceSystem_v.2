@@ -34,4 +34,6 @@ public interface UnderWritingService {
 
 
     void savePolicyInsurance(int insuranceId, String physicalFactor, String financialFactor, String environmentalFactor);
+
+    List<ContractDTO> getPassedContractList(int eid);
 }

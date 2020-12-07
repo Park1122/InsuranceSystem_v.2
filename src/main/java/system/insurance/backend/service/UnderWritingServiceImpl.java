@@ -249,6 +249,33 @@ public class UnderWritingServiceImpl implements UnderWritingService {
     }
 
     @Override
+    public List<ContractDTO> getPassedContractList(int eid) {
+        List<ContractDTO> dtoMap = new ArrayList<>();
+        Optional<Employee> temp = this.employeeRepository.findById(eid);
+        if (temp.isPresent()) {
+            Employee employee = temp.get();
+            List<Contract> contracts = this.contractRepository.findAllBySalesPersonAndUnderwritingPassed(employee, UnderWritingStatus.PASSED);
+            for (Contract contract : contracts) {
+                if (contract.getClient() instanceof RegisteredClient) {
+                    RegisteredClient client = (RegisteredClient) contract.getClient();
+
+                    if (contract.getInsurance().getUwPolicy() != null && client.getEnvironmentalFactor() != null && client.getPhysicalFactor() != null && client.getFinancialFactor() != null)
+                        dtoMap.add(
+                                ContractDTO.builder()
+                                        .id(contract.getId())
+                                        .clientName(client.getName())
+                                        .clientId(client.getId())
+                                        .insuranceName(contract.getInsurance().getName())
+                                        .insurancePayment(contract.getPayment())
+                                .build()
+                        );
+                }
+            }
+        }
+        return dtoMap;
+    }
+
+    @Override
     public Map<Integer, ContractDetailDTO> findAllOnProgressContractList(int cid) {
 
         Map<Integer, ContractDetailDTO> contractDetailDTOMap = new HashMap<>();
@@ -304,6 +331,8 @@ public class UnderWritingServiceImpl implements UnderWritingService {
             this.insuranceRepository.save(insurance);
         }
     }
+
+
 
 
     private float firePremiumRate(Job clientJob) {
