@@ -1,6 +1,5 @@
 package system.insurance.backend.service;
 
-import org.springframework.http.ResponseEntity;
 import system.insurance.backend.dbo.client.Client;
 import system.insurance.backend.dto.ClientFactorInfoDTO;
 import system.insurance.backend.exception.NoClientException;
@@ -34,4 +33,6 @@ public interface ClientService {
     Map<String, String> getSexList();
 
     boolean saveNewUnRegisteredClient(String customerName, String contact, int age, String email, String sex);
+
+    ClientDTO searchRegisteredByNameAndRrn(String rrn, String name);
 }

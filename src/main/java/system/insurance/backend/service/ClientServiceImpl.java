@@ -5,7 +5,6 @@ import system.insurance.backend.dbo.client.*;
 import system.insurance.backend.dbo.contract.Contract;
 import system.insurance.backend.dbo.contract.UnderWritingStatus;
 import system.insurance.backend.dbo.employee.Employee;
-import system.insurance.backend.dto.ClientFactorDTO;
 import system.insurance.backend.dto.ClientFactorInfoDTO;
 import system.insurance.backend.exception.InvalidIdentifierException;
 import system.insurance.backend.exception.NoClientException;
@@ -190,6 +189,8 @@ public class ClientServiceImpl implements ClientService {
         return true;
     }
 
+
+
     @Override
     public ClientDTO searchClientByIdAndName(int id, String name) {
         ClientDTO clientDTO = null;
@@ -227,6 +228,13 @@ public class ClientServiceImpl implements ClientService {
             this.clientRepository.save(client2);
         }));
         return true;
+    }
+
+    @Override
+    public ClientDTO searchRegisteredByNameAndRrn(String rrn, String name) {
+        Optional<Client> client = this.registeredClientRepository.findByNameAndRrn(name,rrn);
+        if (client.isPresent()) return getClientDTO(client.get());
+        return ClientDTO.builder().build();
     }
 
     @Override

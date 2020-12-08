@@ -3,6 +3,7 @@ package system.insurance.backend.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import system.insurance.backend.dbo.accident.AccidentType;
+import system.insurance.backend.dto.ClientDTO;
 import system.insurance.backend.exception.NoAccidentException;
 import system.insurance.backend.exception.NoClientException;
 import system.insurance.backend.dto.ContractDTO;
@@ -19,9 +20,9 @@ public class AccidentController {
     private final AccidentService accidentService;
 
     @GetMapping("/new_accident/insurance_subscription_check")
-    public List<ContractDTO> checkClient(@RequestParam(name = "name") String name, @RequestParam(name = "rrn") String rrn) {
+    public ClientDTO checkClient(@RequestParam(name = "name") String name, @RequestParam(name = "contact") String contact) {
         try {
-            return this.accidentService.checkRegisteredClient(name, rrn);
+            return this.accidentService.checkRegisteredClient(name, contact);
         } catch (NoClientException e) {
             e.printStackTrace();
             return null;

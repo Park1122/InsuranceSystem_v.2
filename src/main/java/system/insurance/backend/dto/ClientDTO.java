@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import system.insurance.backend.dbo.client.Sex;
 
+import java.util.Map;
+
 @Getter
 @Builder
 @AllArgsConstructor
@@ -18,6 +20,7 @@ public class ClientDTO {
     private final String name;
     private final String email;
     private final String gift;
+    private final Map<String,InsuranceDTO> insurances;
 
     private final String insuranceName;
     private final Integer underWritingScore;

@@ -88,6 +88,12 @@ public class ClientController {
         }
     }
 
+    //등록된 고객을 이름과 주민번호로 찾기.
+    @GetMapping("/registered/search")
+    public ResponseEntity<ClientDTO> searchRegisteredByNameAndRrn(@RequestParam(name = "rrn") String rrn,@RequestParam(name = "name") String name){
+        return ResponseEntity.ok(this.clientService.searchRegisteredByNameAndRrn(rrn,name));
+    }
+
     //등록된 고객을 이름으로 찾기.
     @GetMapping("/registered/search{name}")
     public ResponseEntity<ClientDTO> searchRegisteredByName(@PathVariable String name){

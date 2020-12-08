@@ -10,4 +10,6 @@ public interface RegisteredClientRepository extends JpaRepository<RegisteredClie
     Optional<Client> findByRrn(String rrn);
     Optional<Client> findByName(String name);
     Optional<Client> findByContact(String contact);
+
+    Optional<Client> findByNameAndRrn(String name, String rrn);
 }

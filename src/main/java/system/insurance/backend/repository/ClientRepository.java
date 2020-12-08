@@ -18,4 +18,6 @@ public interface ClientRepository extends JpaRepository<Client, Integer> {
     Optional<Client> findByRrn(String rrn);
 
     Optional<Client> findByIdAndName(int id, String name);
+
+    Optional<Client> findByContact(String contact);
 }
