@@ -29,17 +29,19 @@ public class AccidentServiceImpl implements AccidentService{
     private final GuaranteeInfoRepository guaranteeRepository;
     private final SalesTargetRepository salesTargetRepository;
     private final EvaluationReportRepository evaluationReportRepository;
+    private final InsuranceRepository insuranceRepository;
 
     @Autowired
     public AccidentServiceImpl(ClientRepository clientRepository, AccidentRepository accidentRepository, ContractRepository contractRepository,
                                GuaranteeInfoRepository guaranteeRepository, SalesTargetRepository salesTargetRepository,
-                               EvaluationReportRepository evaluationReportRepository) {
+                               EvaluationReportRepository evaluationReportRepository,InsuranceRepository insuranceRepository) {
         this.clientRepository = clientRepository;
         this.accidentRepository = accidentRepository;
         this.contractRepository = contractRepository;
         this.guaranteeRepository=guaranteeRepository;
         this.salesTargetRepository=salesTargetRepository;
         this.evaluationReportRepository=evaluationReportRepository;
+        this.insuranceRepository=insuranceRepository;
     }
 
     @Override
@@ -72,6 +74,7 @@ public class AccidentServiceImpl implements AccidentService{
             insuranceDTOMap.put(insurance.getId() + "",
                     InsuranceDTO.builder()
                             .name(insurance.getName())
+                            .id(insurance.getId())
                             .guaranteeInfoList(guaranteeInfoStringList)
                             .salesTargetList(salesTargetStringList)
                             .evaluationReportList(evaluationInfo)
@@ -80,21 +83,45 @@ public class AccidentServiceImpl implements AccidentService{
 //System.out.print(client.getName());
         return ClientDTO
                 .builder()
-                .name(client.getName())
+                .id(client.getId())
                 .insurances(insuranceDTOMap)
                 .build();
     }
 
     @Override
-    public boolean addAccident(int contractId, String accidentArea, AccidentType accidentType, LocalDateTime date){
-        this.accidentRepository.save(Accident.builder()
-                .accidentArea(accidentArea)
-                .accidentType(accidentType)
-                .date(date)
-                .contractId(contractId)
-                .build());
-        return true;
+    public boolean addAccident(int insuranceId, int clientId, String accidentArea, String accidentType, LocalDateTime dateTime) {
+        Optional<Client> temp = this.clientRepository.findById(clientId);
+        Optional<Insurance> temp2 = this.insuranceRepository.findById(insuranceId);
+        if (temp.isPresent() && temp2.isPresent()) {
+            Client client = temp.get();
+            Insurance insurance = temp2.get();
+            List<Contract> tmpContact = this.contractRepository.findAllByClientAndInsurance(client, insurance);
+
+                Contract contract = tmpContact.get(0);
+
+                AccidentType type = AccidentType.valueOf(accidentType);
+                this.accidentRepository.save(Accident.builder()
+                        .accidentArea(accidentArea)
+                        .accidentType(type)
+                        .date(dateTime)
+                        .contractId(contract.getId())
+                        .build());
+                return true;
+        }
+        return false;
     }
+
+
+//    @Override
+//    public boolean addAccident(int contractId, String accidentArea, AccidentType accidentType, LocalDateTime date){
+//        this.accidentRepository.save(Accident.builder()
+//                .accidentArea(accidentArea)
+//                .accidentType(accidentType)
+//                .date(date)
+//                .contractId(contractId)
+//                .build());
+//        return true;
+//    }
 
     @Override
     public boolean saveHandledAccident(int accidentId, String scenario, String damage, String picture, String video,
@@ -108,6 +135,15 @@ public class AccidentServiceImpl implements AccidentService{
         accident.getInquiryInfo().setProcessingCost(Long.parseLong(processingCost));
         this.accidentRepository.save(accident);
         return true;
+    }
+
+    @Override
+    public Map<String, String> getAccidentTypes() {
+        Map <String, String> map = new HashMap<>();
+        for(AccidentType accidentType: AccidentType.values()){
+            map.put(accidentType.name(), accidentType.getDesc());
+        }
+        return map;
     }
 
 }

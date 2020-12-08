@@ -19,4 +19,8 @@ public interface ContractRepository extends JpaRepository<Contract, Integer> {
     Collection<Object> findAllByClientAndSalesPersonAndUnderwritingPassed(Client client, Employee employee, UnderWritingStatus underwritingPassed);
     List<Contract> findAllByClient(Client client);
     List<Contract> findAllBySalesPersonAndUnderwritingPassed(Employee employee, UnderWritingStatus onprogress);
+
+    Optional<Contract> findByClientAndInsurance(Client client, Insurance insurance);
+
+    List<Contract> findAllByClientAndInsurance(Client client, Insurance insurance);
 }

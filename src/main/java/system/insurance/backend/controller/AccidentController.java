@@ -6,12 +6,10 @@ import system.insurance.backend.dbo.accident.AccidentType;
 import system.insurance.backend.dto.ClientDTO;
 import system.insurance.backend.exception.NoAccidentException;
 import system.insurance.backend.exception.NoClientException;
-import system.insurance.backend.dto.ContractDTO;
 import system.insurance.backend.service.AccidentService;
 
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -29,10 +27,19 @@ public class AccidentController {
         }
     }
 
+    @GetMapping("/accidentType/list")
+    public Map<String,String> getAccidentType() {
+            return this.accidentService.getAccidentTypes();
+
+    }
+
     @PostMapping("/new_accident/accident_register")
-    public boolean registerAccident(@RequestParam(name = "contractId")int contractId,@RequestParam(name = "accidentArea") String accidentArea,
-                                    @RequestParam(name = "accidentType")AccidentType accidentType, @RequestParam(name = "date") LocalDateTime date) {
-        return this.accidentService.addAccident(contractId, accidentArea, accidentType, date);
+    public boolean registerAccident(@RequestParam(name = "insuranceId")int insuranceId,@RequestParam(name = "clientId")int clientId,
+                                    @RequestParam(name = "accidentArea") String accidentArea,
+                                    @RequestParam(name = "accidentType")String accidentType,
+                                    @RequestParam(name = "dateTime") LocalDateTime dateTime) {
+        System.out.println(accidentType+"타입");
+        return this.accidentService.addAccident(insuranceId, clientId, accidentArea, accidentType,dateTime);
     }
 
     @PostMapping("/handle_accident")
