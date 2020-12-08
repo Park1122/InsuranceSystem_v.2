@@ -21,6 +21,7 @@ public class AnnouncementController {
     }
 
 
+    //공지 전체 목록.
     @GetMapping("/info")
     @ResponseBody
     @JsonInclude(Include.NON_NULL)
@@ -28,10 +29,10 @@ public class AnnouncementController {
         return this.announcementService.findAll();
     }
 
+    //공지 중 하나.
     @GetMapping("/content")
     @ResponseBody
     public ResponseEntity<AnnouncementDTO> getContent(@RequestParam(name = "id") int id){
-        System.out.println(id);
         return ResponseEntity.of(this.announcementService.findContent(id));
     }
 }

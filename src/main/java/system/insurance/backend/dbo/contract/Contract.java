@@ -11,6 +11,7 @@ import system.insurance.backend.dbo.insurance.Insurance;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Date;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -27,36 +28,38 @@ public class Contract implements Serializable{
 	@JoinColumn(name="client_id",referencedColumnName = "id")
 	private Client client;
 
-	private boolean underwritingPassed;
+	@Enumerated(EnumType.STRING)
+	private UnderWritingStatus underwritingPassed;
 
 	@ColumnDefault("0")
-	private int payment;
-	private Date dueDate;
+	private Long payment;
+	private LocalDate dueDate;
 	@ColumnDefault("false")
 	private boolean compensationProvision;
-	private int paid;
 	@ManyToOne(targetEntity = Insurance.class)
 	@JoinColumn(name="insurance_id",referencedColumnName = "id")
 	private Insurance insurance;
-	private Date startDate;
+	private LocalDate startDate;
 	@ManyToOne(targetEntity = Employee.class)
 	@JoinColumn(name="sales_person_id",referencedColumnName = "id")
 	private Employee salesPerson;
 	@ManyToOne(targetEntity = Insurance.class)
 	@JoinColumn(name="reinsurance_id",referencedColumnName = "id")
 	private Insurance reinsurance;
+
 	@Builder
-	public Contract( boolean underwritingPassed, int payment, Date dueDate, boolean compensationProvision,
-					int paid, Insurance insurance, Date startDate, Employee salesPerson,
+	public Contract( UnderWritingStatus underwritingPassed, Long payment, LocalDate dueDate, boolean compensationProvision,
+					 Insurance insurance, LocalDate startDate, Employee salesPerson,
 					Insurance reinsurance) {
 		this.underwritingPassed=underwritingPassed;
 		this.payment = payment;
 		this.dueDate = dueDate;
 		this.compensationProvision = compensationProvision;
-		this.paid = paid;
 		this.insurance = insurance;
 		this.startDate = startDate;
 		this.salesPerson = salesPerson;
 		this.reinsurance = reinsurance;
+
+
 	}
 }

@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 
 @Getter
@@ -17,11 +18,11 @@ public class AnnouncementDTO {
     private String title;
     private String content;
     private String authorName;
-    private Date date;
+    private LocalDate date;
     private boolean priority;
 
     @Builder
-    public AnnouncementDTO(int id, String title, String content, String authorName, Date date, boolean priority) {
+    public AnnouncementDTO(int id, String title, String content, String authorName, LocalDate date, boolean priority) {
         this.id = id;
         this.title = title;
         this.content = content;

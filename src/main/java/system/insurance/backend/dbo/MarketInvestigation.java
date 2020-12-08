@@ -5,6 +5,7 @@ import system.insurance.backend.dbo.employee.Employee;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "market_investigation")
@@ -16,7 +17,7 @@ public class MarketInvestigation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String title;
-    private Date date;
+    private LocalDate date;
     @ManyToOne
     @JoinColumn
     private Employee author;
@@ -26,7 +27,7 @@ public class MarketInvestigation {
     private String targetClient;
 
     @Builder
-    public MarketInvestigation(String title, Date date, Employee author, String needs, String targetClient) {
+    public MarketInvestigation(String title, LocalDate date, Employee author, String needs, String targetClient) {
         this.title = title;
         this.date = date;
         this.author = author;

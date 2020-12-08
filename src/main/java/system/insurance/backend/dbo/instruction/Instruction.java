@@ -5,6 +5,7 @@ import system.insurance.backend.dbo.employee.Employee;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.time.LocalDate;
 
 @MappedSuperclass
 @Getter
@@ -25,9 +26,9 @@ public abstract class Instruction {
     @JoinColumn(name = "author", referencedColumnName = "id")
     private Employee author;
     @Column(columnDefinition = "date")
-    private Date date;
+    private LocalDate date;
 
-    public Instruction(String title, String instruction, InstructionType type, Employee author, Date date) {
+    public Instruction(String title, String instruction, InstructionType type, Employee author, LocalDate date) {
         this.title = title;
         this.instruction = instruction;
         this.type = type;

@@ -11,6 +11,10 @@ public class ContractDetailDTO {
     private final String insuranceName;
     private final String insuranceType;
 
+    private final String physicalPolicy;
+    private final String environmentalPolicy;
+    private final String financialPolicy;
+
     private final String physicalSmokeFrequency;
     private final String physicalDrinkingFrequency;
 
@@ -22,10 +26,13 @@ public class ContractDetailDTO {
     private final Long financialProperty;
     private final int financialCreditRating;
 
+    private final Long calculatedPayment;
+
     @Builder
     public ContractDetailDTO(String insuranceName, String insuranceType, String physicalDrinkingFrequency,String physicalSmokeFrequency,
                            String environmentalJob, String environmentalDangerousArea, String environmentalDangerousHobby,
-                             int financialCreditRating, Long financialIncome, Long financialProperty) {
+                             int financialCreditRating, Long financialIncome, Long financialProperty,String physicalPolicy,
+                             String environmentalPolicy,String financialPolicy,Long calculatedPayment) {
         this.insuranceName = insuranceName;
         this.insuranceType = insuranceType;
         this.physicalDrinkingFrequency=physicalDrinkingFrequency;
@@ -36,7 +43,9 @@ public class ContractDetailDTO {
         this.financialCreditRating=financialCreditRating;
         this.financialIncome=financialIncome;
         this.financialProperty=financialProperty;
+        this.physicalPolicy=physicalPolicy;
+        this.environmentalPolicy=environmentalPolicy;
+        this.financialPolicy=financialPolicy;
+        this.calculatedPayment=calculatedPayment;
     }
-
-
 }

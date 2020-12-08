@@ -1,10 +1,10 @@
 package system.insurance.backend.service;
 
 import org.springframework.web.multipart.MultipartFile;
-import system.insurance.backend.dbo.client.Job;
 import system.insurance.backend.dto.AuthorizationReportDTO;
 import system.insurance.backend.dto.DevelopingInsuranceDTO;
 import system.insurance.backend.dto.InsuranceDTO;
+import system.insurance.backend.dto.InsuranceInfoDTO;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,5 +27,14 @@ public interface InsuranceService {
 
     List<AuthorizationReportDTO> getAuthorizationReportList();
 
-    Long calculatePremiumRate(String type, Long payIn, Job clientJob);
+//    Long calculatePremiumRate(String type, Long payIn, Job clientJob);
+
+    InsuranceInfoDTO getInsuranceInfoList();
+
+    Map<String, String> getNoPolicyInsuranceList();
+
+    Map<String, InsuranceDTO> getOnSaleInsuranceList();
+
+
+//    void savePremiumRate(int cid);
 }

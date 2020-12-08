@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -12,10 +13,10 @@ public class DevelopingInsuranceDTO {
     private final int id;
     private final String name;
     private final String author;
-    private final Date date;
+    private final LocalDate date;
 
     @Builder
-    public DevelopingInsuranceDTO(int id, String name, Date date, String author) {
+    public DevelopingInsuranceDTO(int id, String name, LocalDate date, String author) {
         this.id = id;
         this.name = name;
         this.date = date;

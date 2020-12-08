@@ -5,15 +5,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import system.insurance.backend.FileUploadProperties;
-import system.insurance.backend.dbo.client.Job;
 import system.insurance.backend.dbo.employee.Employee;
+import system.insurance.backend.dto.*;
 import system.insurance.backend.exception.FileUploadException;
 import system.insurance.backend.exception.InvalidIdentifierException;
 import system.insurance.backend.dbo.insurance.*;
-import system.insurance.backend.dto.AuthorizationReportDTO;
-import system.insurance.backend.dto.DevelopingInsuranceDTO;
-import system.insurance.backend.dto.GuaranteeInfoWrapper;
-import system.insurance.backend.dto.InsuranceDTO;
 import system.insurance.backend.repository.*;
 
 import java.io.File;
@@ -22,7 +18,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -44,7 +39,7 @@ public class InsuranceServiceImpl implements InsuranceService {
     public InsuranceServiceImpl(FileUploadProperties prop, InsuranceRepository insuranceRepository, GuaranteeInfoRepository guaranteeRepository,
                                 SalesTargetRepository salesTargetRepository, EvaluationReportRepository evaluationReportRepository,
                                 EmployeeRepository employeeRepository, AuthorizationReportRepository authorizationReportRepository
-    ,InsuranceCompanyRepository insuranceCompanyRepository) {
+            , InsuranceCompanyRepository insuranceCompanyRepository) {
         this.insuranceRepository = insuranceRepository;
         this.guaranteeRepository = guaranteeRepository;
         this.salesTargetRepository = salesTargetRepository;
@@ -55,7 +50,7 @@ public class InsuranceServiceImpl implements InsuranceService {
                 .toAbsolutePath().normalize();
         this.evaluationReportPath = Paths.get(prop.getInsuranceEvaluationReport())
                 .toAbsolutePath().normalize();
-        this.insuranceCompanyRepository=insuranceCompanyRepository;
+        this.insuranceCompanyRepository = insuranceCompanyRepository;
         try {
             Files.createDirectories(this.authorizationDocPath);
             Files.createDirectories(this.evaluationReportPath);
@@ -69,12 +64,9 @@ public class InsuranceServiceImpl implements InsuranceService {
     public Map<String, String> getInsuranceCompanyList() {
         Map<String, String> companyList = new HashMap<>();
         List<InsuranceCompany> companies = this.insuranceCompanyRepository.findAll();
-        for (InsuranceCompany company:companies) {
-            companyList.put(company.getCompany(),company.getCompanyName());
+        for (InsuranceCompany company : companies) {
+            companyList.put(company.getCompany(), company.getCompanyName());
         }
-//        for (InsuranceCompany value : InsuranceCompany.values()) {
-//            companyList.put(value.name(), value.getDescription());
-//        }
         return companyList;
     }
 
@@ -129,6 +121,42 @@ public class InsuranceServiceImpl implements InsuranceService {
         return dtoList;
     }
 
+
+    @Override
+    public Map<String, InsuranceDTO> getOnSaleInsuranceList() {
+        List<Insurance> list = this.insuranceRepository.findAllByStatus(InsuranceStatus.ON_SALE);
+        Map<String, InsuranceDTO> dtoMap = new HashMap<>();
+
+        list.forEach((insurance) -> {
+            List<GuaranteeInfo> guaranteeInfoList = this.guaranteeRepository.findAllByInsurance(insurance);
+            List<SalesTarget> salesTargetList = this.salesTargetRepository.findAllByInsurance(insurance);
+            List<EvaluationReport> evaluationReportList = this.evaluationReportRepository.findAllByInsurance(insurance);
+
+            Map<Integer, String> salesTargetStringList = new HashMap<>();
+            Map<Integer, GuaranteeInfoWrapper> guaranteeInfoStringList = new HashMap<>();
+            Map<Integer, String> evaluationInfo = new HashMap<>();
+
+            guaranteeInfoList.forEach(guaranteeInfo -> guaranteeInfoStringList.put(guaranteeInfo.getId(), GuaranteeInfoWrapper.builder()
+                    .condition(guaranteeInfo.getGuaranteeCondition())
+                    .limit(guaranteeInfo.getGuaranteeLimit())
+                    .special(guaranteeInfo.isSpecialCondition())
+                    .build()));
+            salesTargetList.forEach(salesTarget -> salesTargetStringList.put(salesTarget.getId(), salesTarget.getTarget()));
+            evaluationReportList.forEach(evaluationReport -> evaluationInfo.put(evaluationReport.getId(), evaluationReport.getDate() + " " +
+                    new File(evaluationReport.getPath()).getName()));
+
+            dtoMap.put(insurance.getId() + "",
+                    InsuranceDTO.builder()
+                            .name(insurance.getName())
+                            .guaranteeInfoList(guaranteeInfoStringList)
+                            .salesTargetList(salesTargetStringList)
+                            .evaluationReportList(evaluationInfo)
+                            .build());
+        });
+
+        return dtoMap;
+    }
+
     @Override
     public Optional<InsuranceDTO> getInsuranceDetails(int id) {
         Optional<Insurance> insurance = this.insuranceRepository.findById(id);
@@ -163,7 +191,6 @@ public class InsuranceServiceImpl implements InsuranceService {
 
     @Override
     public boolean uploadAuthorizationDoc(MultipartFile file, Integer author_eid) throws IOException {
-
         String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
         if (fileName.contains(".."))
             throw new FileUploadException("파일명에 부적절한 문자가 포함되어 있습니다. " + fileName);
@@ -178,7 +205,7 @@ public class InsuranceServiceImpl implements InsuranceService {
                             .path(targetLocation.toString())
                             .fileName(fileName)
                             .author(author)
-                            .date(Date.valueOf(LocalDate.now()))
+                            .date(LocalDate.now())
                             .build());
         }
         return true;
@@ -196,7 +223,7 @@ public class InsuranceServiceImpl implements InsuranceService {
                 Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
                 this.evaluationReportRepository.save(EvaluationReport.builder()
                         .path(targetLocation.toString())
-                        .date(Date.valueOf(LocalDate.now()))
+                        .date(LocalDate.now())
                         .insurance(insurance.get())
                         .build());
             }
@@ -219,8 +246,7 @@ public class InsuranceServiceImpl implements InsuranceService {
         Insurance insurance = this.insuranceRepository.save(Insurance.builder()
                 .author(employee)
                 .company(this.insuranceCompanyRepository.findByCompany("HANHWA"))
-//                .company(InsuranceCompany.HANHWA)
-                .date(Date.valueOf(LocalDate.now()))
+                .date(LocalDate.now())
                 .name(name)
                 .status(InsuranceStatus.DEVELOPING)
                 .type(InsuranceType.valueOf(type))
@@ -243,88 +269,24 @@ public class InsuranceServiceImpl implements InsuranceService {
     }
 
     @Override
-    public Long calculatePremiumRate(String type, Long payIn, Job clientJob) {
-        InsuranceType insuranceType = InsuranceType.valueOf(type);
-        Long calculatePay = 0L;
-        if (insuranceType.equals(InsuranceType.FIRE)) {
-            calculatePay = (long) Math.round(payIn * this.firePremiumRate(clientJob));
-        } else if (insuranceType.equals(InsuranceType.INJURY)) {
-            calculatePay = (long) Math.round(payIn*this.injuryPremiumRate(clientJob));
-        } else if (insuranceType.equals(InsuranceType.DEATH)) {
-            calculatePay = (long) Math.round(payIn*this.deathPremiumRate(clientJob));
-        }
-        return calculatePay;
+    public InsuranceInfoDTO getInsuranceInfoList() {
+        return InsuranceInfoDTO.builder()
+                .companyList(this.getInsuranceCompanyList())
+                .typeList(this.getInsuranceTypeList())
+                .productList(this.getProductList())
+                .build();
     }
-    private float firePremiumRate(Job clientJob) {
-        float rate = 1.0f;
-        switch (clientJob) {
-            case DRIVER:
-            case OFFICE_WORKER:
-                rate *= 1.2;
-                break;
-            case HOUSEWIFE:
-                rate *= 1.1;
-                break;
-            case STUDENT:
-            case SOLDIER:
-            case NONE:
-                rate *= 1.0;
-                break;
-            case SELF_EMPLOYMENT:
-                rate *= 1.4;
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + clientJob);
-        }
-        return rate;
+
+    @Override
+    public Map<String, String> getNoPolicyInsuranceList() {
+        Map<String, String> dtoHashMap = new HashMap<>();
+        List<Insurance> insurances = this.insuranceRepository.findAllByStatus(InsuranceStatus.ON_SALE);
+        insurances.forEach((insurance) -> {
+            if (insurance.getUwPolicy() == null)
+                dtoHashMap.put(insurance.getId() + "", insurance.getType().getDescription() + " | " + insurance.getCompany().getCompanyName() + " | " + insurance.getName());
+        });
+        return dtoHashMap;
     }
-    private float injuryPremiumRate(Job clientJob) {
-        float rate = 1.0f;
-        switch (clientJob) {
-            case DRIVER:
-            case SELF_EMPLOYMENT:
-                rate *= 1.2;
-                break;
-            case HOUSEWIFE:
-            case OFFICE_WORKER:
-                rate *= 1.1;
-                break;
-            case STUDENT:
-            case NONE:
-                rate *= 1.0;
-                break;
-            case SOLDIER:
-                rate *= 1.3;
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + clientJob);
-        }
-        return rate;
-    }
-    private float deathPremiumRate(Job clientJob) {
-        float rate = 1.0f;
-        switch (clientJob) {
-            case DRIVER:
-                rate *= 1.3;
-                break;
-            case HOUSEWIFE:
-                rate *= 1.1;
-                break;
-            case STUDENT:
-            case NONE:
-                rate *= 1.0;
-                break;
-            case SOLDIER:
-                rate *= 1.4;
-                break;
-            case OFFICE_WORKER:
-            case SELF_EMPLOYMENT:
-                rate *= 1.2;
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + clientJob);
-        }
-        return rate;
-    }
+
 
 }

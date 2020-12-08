@@ -8,6 +8,7 @@ import system.insurance.backend.dbo.insurance.InsuranceStatus;
 import system.insurance.backend.dbo.insurance.InsuranceType;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Map;
 
 @Getter
@@ -19,13 +20,13 @@ public class InsuranceDTO {
     private final InsuranceStatus status;
     private final String name;
     private final String author;
-    private final Date date;
+    private final LocalDate date;
     private final Map<Integer, GuaranteeInfoWrapper> guaranteeInfoList;
     private final Map<Integer, String> salesTargetList;
     private final Map<Integer, String> evaluationReportList;
 
     @Builder
-    public InsuranceDTO(int id, InsuranceType type, InsuranceCompany company, InsuranceStatus status, String name, String author, Date date, Map<Integer, GuaranteeInfoWrapper> guaranteeInfoList, Map<Integer, String> salesTargetList, Map<Integer, String> evaluationReportList) {
+    public InsuranceDTO(int id, InsuranceType type, InsuranceCompany company, InsuranceStatus status, String name, String author, LocalDate date, Map<Integer, GuaranteeInfoWrapper> guaranteeInfoList, Map<Integer, String> salesTargetList, Map<Integer, String> evaluationReportList) {
         this.id = id;
         this.type = type;
         this.company = company;
