@@ -10,15 +10,27 @@
 https://github.com/ygnaiih1680/InsuranceSystem-react
 ***
 ### 프로젝트 실행 방법   
-1. CMD 열기(frontend, backend 2개 필요) - 1번 cmd, 2번 cmd
-2. 1번 cmd - Frontend 파일 저장 위치로 이동
-3. 아래의 커맨드 입력  
+#### Frontend
+1. Frontend 파일 저장 위치로 이동
+2. 아래 명령어 입력
 ```
 npm update
 npm start
 ```
-4. 2번 cmd - Backend 파일 저장 위치로 이동
-5. 아래의 커맨드 입력  
+#### Backend
+1. Backend 파일 저장 위치로 이동
+2. 아래 명령어 입력
 ```
 gradlew bootrun
 ```
+#### 접속용 Test 계정
+* ID : test
+* Password : 1234
+***
+### 프로젝트 데모
+1. 로그인화면
+![demo1](https://user-images.githubusercontent.com/48744330/102748387-6c441c80-43a5-11eb-8c48-c39279105f3a.png)
+2. 메인화면
+![demo2](https://user-images.githubusercontent.com/48744330/102748409-7a923880-43a5-11eb-9e9c-f1188398f720.png)
+3. UnderWriting - User Factor 관리화면
+![demo3](https://user-images.githubusercontent.com/48744330/102748423-8251dd00-43a5-11eb-828a-7ad04dc76ab4.png)
